@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 88 100" shape-rendering="crispEdges">
+  <title>Claude Code 오렌지 스파크 마스코트</title>
+  <rect x="36" y="0" width="16" height="20" fill="#d97757"/>
+  <rect x="36" y="68" width="16" height="20" fill="#d97757"/>
+  <rect x="0" y="36" width="20" height="16" fill="#d97757"/>
+  <rect x="68" y="36" width="20" height="16" fill="#d97757"/>
+  <rect x="14" y="14" width="14" height="14" fill="#e8946f"/>
+  <rect x="60" y="14" width="14" height="14" fill="#e8946f"/>
+  <rect x="14" y="60" width="14" height="14" fill="#e8946f"/>
+  <rect x="60" y="60" width="14" height="14" fill="#e8946f"/>
+  <rect x="28" y="28" width="32" height="32" fill="#d97757"/>
+  <rect x="32" y="24" width="24" height="40" fill="#d97757"/>
+  <rect x="24" y="32" width="40" height="24" fill="#d97757"/>
+  <rect x="34" y="40" width="6" height="8" fill="#3a2218"/>
+  <rect x="48" y="40" width="6" height="8" fill="#3a2218"/>
+  <rect x="40" y="50" width="8" height="3" fill="#3a2218"/>
+  <rect x="-2" y="92" width="92" height="8" fill="#000" opacity="0.12"/>
+</svg>

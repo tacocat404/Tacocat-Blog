@@ -1,0 +1,309 @@
+---
+import { getCollection, render } from "astro:content";
+import { t, type Lang } from "../i18n/ui";
+import Wallpaper from "./Wallpaper.astro";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const tr = t(lang);
+const otherLangPath = lang === "ko" ? "/en/" : "/";
+
+const pick = (ko?: string, en?: string) => (lang === "en" && en ? en : ko ?? "");
+
+// 섹션별 픽셀 아이콘 (인라인 SVG)
+const icons: Record<string, string> = {
+  portfolio: `<svg viewBox="0 0 24 20" shape-rendering="crispEdges" width="36" height="30"><rect x="2" y="3" width="9" height="4" fill="#3a6a9a"/><rect x="1" y="6" width="22" height="12" fill="#7fb3e0"/><rect x="1" y="6" width="22" height="3" fill="#a9d4f2"/><rect x="1" y="6" width="22" height="12" fill="none" stroke="#274a6a" stroke-width="1"/></svg>`,
+  awards: `<svg viewBox="0 0 24 20" shape-rendering="crispEdges" width="36" height="30"><rect x="4" y="3" width="3" height="5" fill="#c9902a"/><rect x="17" y="3" width="3" height="5" fill="#c9902a"/><rect x="7" y="2" width="10" height="7" fill="#f0c04a"/><rect x="7" y="2" width="10" height="7" fill="none" stroke="#8a5a1a" stroke-width="1"/><rect x="10" y="9" width="4" height="4" fill="#c9902a"/><rect x="6" y="13" width="12" height="3" fill="#8a5a1a"/></svg>`,
+  activities: `<svg viewBox="0 0 24 20" shape-rendering="crispEdges" width="36" height="30"><rect x="7" y="16" width="10" height="3" fill="#7a4a22"/><rect x="11" y="7" width="2" height="9" fill="#3f8f3a"/><rect x="5" y="5" width="6" height="5" fill="#5abe4a"/><rect x="13" y="4" width="6" height="5" fill="#6ace5a"/></svg>`,
+  study: `<svg viewBox="0 0 24 20" shape-rendering="crispEdges" width="36" height="30"><rect x="3" y="5" width="9" height="12" fill="#f7efdd"/><rect x="12" y="5" width="9" height="12" fill="#ece0c6"/><rect x="11" y="4" width="2" height="14" fill="#b85a7a"/><rect x="5" y="8" width="5" height="1" fill="#b8a888"/><rect x="5" y="11" width="5" height="1" fill="#b8a888"/><rect x="14" y="8" width="5" height="1" fill="#b8a888"/><rect x="14" y="11" width="5" height="1" fill="#b8a888"/><rect x="3" y="5" width="18" height="12" fill="none" stroke="#8a3a5a" stroke-width="1"/></svg>`,
+  about: `<svg viewBox="0 0 24 20" shape-rendering="crispEdges" width="36" height="30"><rect x="10" y="2" width="4" height="5" fill="#d97757"/><rect x="10" y="13" width="4" height="5" fill="#d97757"/><rect x="2" y="8" width="5" height="4" fill="#d97757"/><rect x="17" y="8" width="5" height="4" fill="#d97757"/><rect x="7" y="7" width="10" height="6" fill="#e0855f"/><rect x="9" y="8" width="2" height="2" fill="#3a2218"/><rect x="13" y="8" width="2" height="2" fill="#3a2218"/></svg>`,
+};
+
+const byOrder = (a: any, b: any) => (a.data.order ?? 0) - (b.data.order ?? 0);
+
+const portfolio = (await getCollection("portfolio")).sort(byOrder);
+const awards = (await getCollection("awards")).sort(byOrder);
+const activities = (await getCollection("activities")).sort(byOrder);
+const study = (await getCollection("study")).sort(byOrder);
+
+// 각 항목의 본문(Content) 미리 렌더
+const render4 = async (items: any[]) =>
+  Promise.all(items.map(async (e) => ({ data: e.data, Content: (await render(e)).Content })));
+
+const pf = await render4(portfolio);
+const aw = await render4(awards);
+const ac = await render4(activities);
+const st = await render4(study);
+---
+
+<!-- 부팅 화면 -->
+<div id="boot">
+  <img class="logo" src="/mascot.svg" alt="" />
+  <div class="boot-title">{tr.osName}</div>
+  <div class="boot-sub">v1.0 · pixel edition</div>
+  <div class="boot-bar"><i></i></div>
+  <div class="boot-hint">{tr.bootHint}<span class="caret">_</span></div>
+</div>
+
+<!-- 상단 메뉴바 -->
+<div class="menubar">
+  <span>{tr.osName}</span>
+  <span class="spacer"></span>
+  <a class="lang-btn" href={otherLangPath}>{tr.langToggle}</a>
+  <span class="clock" id="clock-top">--:--</span>
+</div>
+
+<!-- 바탕화면 -->
+<div class="desktop">
+  <Wallpaper />
+  <div class="icons">
+    <button class="icon" data-open="portfolio">
+      <span class="glyph" set:html={icons.portfolio} />
+      <span class="label">{tr.apps.portfolio}</span>
+    </button>
+    <button class="icon" data-open="awards">
+      <span class="glyph" set:html={icons.awards} />
+      <span class="label">{tr.apps.awards}</span>
+    </button>
+    <button class="icon" data-open="activities">
+      <span class="glyph" set:html={icons.activities} />
+      <span class="label">{tr.apps.activities}</span>
+    </button>
+    <button class="icon" data-open="study">
+      <span class="glyph" set:html={icons.study} />
+      <span class="label">{tr.apps.study}</span>
+    </button>
+    <button class="icon" data-open="about">
+      <span class="glyph" set:html={icons.about} />
+      <span class="label">{tr.apps.about}</span>
+    </button>
+  </div>
+
+  <!-- 포트폴리오 창 -->
+  <section class="window" data-app="portfolio" style="left:130px; top:30px;">
+    <header class="titlebar"><span class="ico" set:html={icons.portfolio} /><span class="t">{tr.apps.portfolio}</span><span class="x" data-close>x</span></header>
+    <div class="body">
+      {pf.map((e) => (
+        <article class="entry">
+          <h3>{pick(e.data.title, e.data.titleEn)}</h3>
+          <div class="meta">{e.data.period}</div>
+          <p class="summary">{pick(e.data.summary, e.data.summaryEn)}</p>
+          <div>{e.data.tech.map((x: string) => <span class="tech-chip">{x}</span>)}</div>
+          <div class="prose"><e.Content /></div>
+          {e.data.links.length > 0 && (
+            <div class="links">{e.data.links.map((l: any) => <a href={l.url} target="_blank" rel="noopener">▸ {l.label}</a>)}</div>
+          )}
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <!-- 수상 창 -->
+  <section class="window" data-app="awards" style="left:160px; top:60px;">
+    <header class="titlebar"><span class="ico" set:html={icons.awards} /><span class="t">{tr.apps.awards}</span><span class="x" data-close>x</span></header>
+    <div class="body">
+      {aw.map((e) => (
+        <article class="entry">
+          <h3>{pick(e.data.title, e.data.titleEn)}</h3>
+          <div class="meta">{e.data.org} · {e.data.date} · {e.data.rank}</div>
+          <p class="summary">{pick(e.data.summary, e.data.summaryEn)}</p>
+          <div class="prose"><e.Content /></div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <!-- 활동 창 -->
+  <section class="window" data-app="activities" style="left:190px; top:90px;">
+    <header class="titlebar"><span class="ico" set:html={icons.activities} /><span class="t">{tr.apps.activities}</span><span class="x" data-close>x</span></header>
+    <div class="body">
+      {ac.map((e) => (
+        <article class="entry">
+          <h3>{pick(e.data.title, e.data.titleEn)}</h3>
+          <div class="meta">{e.data.role} · {e.data.period}</div>
+          <p class="summary">{pick(e.data.summary, e.data.summaryEn)}</p>
+          <div class="prose"><e.Content /></div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <!-- 공부기록 창 -->
+  <section class="window" data-app="study" style="left:220px; top:120px;">
+    <header class="titlebar"><span class="ico" set:html={icons.study} /><span class="t">{tr.apps.study}</span><span class="x" data-close>x</span></header>
+    <div class="body">
+      {st.map((e) => (
+        <article class="entry">
+          <h3>{pick(e.data.title, e.data.titleEn)}</h3>
+          <div class="meta">{e.data.date}</div>
+          <div>{e.data.tags.map((x: string) => <span class="tag">#{x}</span>)}</div>
+          <div class="prose"><e.Content /></div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <!-- About 창 -->
+  <section class="window" data-app="about" style="left:250px; top:80px;">
+    <header class="titlebar"><span class="ico" set:html={icons.about} /><span class="t">{tr.apps.about}</span><span class="x" data-close>x</span></header>
+    <div class="body">
+      <article class="entry">
+        <h3>404 Tacocat</h3>
+        <p class="summary">{tr.emptyAbout}</p>
+      </article>
+    </div>
+  </section>
+
+  <div class="mascot-wrap"><img class="mascot" src="/mascot.svg" alt="Claude Code mascot" /></div>
+</div>
+
+<!-- 시작 메뉴 -->
+<div class="start-menu" id="start-menu">
+  <button data-open="portfolio"><span class="mini" set:html={icons.portfolio} />{tr.apps.portfolio}</button>
+  <button data-open="awards"><span class="mini" set:html={icons.awards} />{tr.apps.awards}</button>
+  <button data-open="activities"><span class="mini" set:html={icons.activities} />{tr.apps.activities}</button>
+  <button data-open="study"><span class="mini" set:html={icons.study} />{tr.apps.study}</button>
+  <button data-open="about"><span class="mini" set:html={icons.about} />{tr.apps.about}</button>
+</div>
+
+<!-- 작업표시줄 -->
+<div class="taskbar">
+  <button class="start-btn" id="start-btn"><span class="dot"></span>{tr.start}</button>
+  <div class="task-items" id="task-items"></div>
+  <span class="clock" id="clock-bottom">--:--</span>
+</div>
+
+<script>
+  // 부팅 화면: 진행바 채우고 끝나면(또는 클릭/키 입력) 사라짐
+  const boot = document.getElementById("boot")!;
+  const bar = boot.querySelector(".boot-bar > i") as HTMLElement;
+  let p = 0;
+  const tick = setInterval(() => {
+    p += 20;
+    bar.style.width = Math.min(p, 100) + "%";
+    if (p >= 100) clearInterval(tick);
+  }, 220);
+  const closeBoot = () => boot.classList.add("hidden");
+  setTimeout(closeBoot, 1600);
+  boot.addEventListener("click", closeBoot);
+  window.addEventListener("keydown", closeBoot, { once: true });
+
+  // 창 열기/닫기/최소화 + 활성 창 + 작업표시줄 버튼
+  const taskItems = document.getElementById("task-items")!;
+  let z = 10;
+
+  const setActive = (win: HTMLElement | null) => {
+    document.querySelectorAll(".window.open").forEach((w) => w.classList.add("inactive"));
+    if (win) win.classList.remove("inactive");
+    document.querySelectorAll<HTMLElement>(".task-btn").forEach((b) =>
+      b.classList.toggle("active", !!win && b.dataset.app === win.dataset.app)
+    );
+  };
+  const focusWin = (win: HTMLElement) => {
+    win.style.zIndex = String(++z);
+    setActive(win);
+  };
+  const makeTaskBtn = (win: HTMLElement) => {
+    const name = win.dataset.app!;
+    if (taskItems.querySelector(`.task-btn[data-app="${name}"]`)) return;
+    const btn = document.createElement("button");
+    btn.className = "task-btn";
+    btn.dataset.app = name;
+    const icon = win.querySelector(".titlebar .ico")!.innerHTML;
+    const title = win.querySelector(".titlebar .t")!.textContent;
+    btn.innerHTML = `<span class="ti">${icon}</span>${title}`;
+    btn.addEventListener("click", () => {
+      const open = win.classList.contains("open");
+      const active = open && !win.classList.contains("inactive");
+      if (active) {
+        win.classList.remove("open"); // 최소화
+        setActive(null);
+      } else {
+        win.classList.add("open");
+        focusWin(win);
+      }
+    });
+    taskItems.appendChild(btn);
+  };
+  const openApp = (name: string) => {
+    const win = document.querySelector<HTMLElement>(`.window[data-app="${name}"]`);
+    if (!win) return;
+    win.classList.add("open");
+    makeTaskBtn(win);
+    focusWin(win);
+    document.getElementById("start-menu")!.classList.remove("open");
+  };
+  const closeApp = (win: HTMLElement) => {
+    win.classList.remove("open");
+    taskItems.querySelector(`.task-btn[data-app="${win.dataset.app}"]`)?.remove();
+    setActive(null);
+  };
+  document.querySelectorAll<HTMLElement>(".window").forEach((win) =>
+    win.addEventListener("mousedown", () => focusWin(win))
+  );
+  document.querySelectorAll<HTMLElement>("[data-open]").forEach((el) =>
+    el.addEventListener("click", () => openApp(el.dataset.open!))
+  );
+  document.querySelectorAll<HTMLElement>("[data-close]").forEach((el) =>
+    el.addEventListener("click", (e) => {
+      e.stopPropagation();
+      closeApp(el.closest(".window") as HTMLElement);
+    })
+  );
+
+  // 시작 메뉴 토글
+  const startBtn = document.getElementById("start-btn")!;
+  const startMenu = document.getElementById("start-menu")!;
+  startBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    startMenu.classList.toggle("open");
+  });
+  document.addEventListener("click", () => startMenu.classList.remove("open"));
+
+  // 창 드래그 (데스크톱에서만)
+  document.querySelectorAll<HTMLElement>(".window .titlebar").forEach((bar) => {
+    bar.addEventListener("mousedown", (e) => {
+      if (window.matchMedia("(max-width: 640px)").matches) return;
+      const win = bar.closest(".window") as HTMLElement;
+      win.style.zIndex = String(++z);
+      const r = win.getBoundingClientRect();
+      const dx = e.clientX - r.left;
+      const dy = e.clientY - r.top;
+      const move = (ev: MouseEvent) => {
+        win.style.left = ev.clientX - dx + "px";
+        win.style.top = Math.max(26, ev.clientY - dy) + "px";
+      };
+      const up = () => {
+        document.removeEventListener("mousemove", move);
+        document.removeEventListener("mouseup", up);
+      };
+      document.addEventListener("mousemove", move);
+      document.addEventListener("mouseup", up);
+    });
+  });
+
+  // 시계
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const updateClock = () => {
+    const d = new Date();
+    const s = pad(d.getHours()) + ":" + pad(d.getMinutes());
+    document.getElementById("clock-top")!.textContent = s;
+    document.getElementById("clock-bottom")!.textContent = s;
+  };
+  updateClock();
+  setInterval(updateClock, 10000);
+
+  // 계절에 맞춰 바탕화면 자동 변경 (북반구 기준)
+  const seasonOf = (m: number) =>
+    m >= 3 && m <= 5 ? "spring" :
+    m >= 6 && m <= 8 ? "summer" :
+    m >= 9 && m <= 11 ? "autumn" : "winter";
+  const override = new URLSearchParams(location.search).get("season");
+  const season = override ?? seasonOf(new Date().getMonth() + 1);
+  document.body.dataset.season = season;
+  document.querySelectorAll<HTMLElement>(".wp").forEach((w) =>
+    w.classList.toggle("active", w.dataset.wp === season)
+  );
+</script>
