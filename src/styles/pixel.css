@@ -96,6 +96,18 @@ img { image-rendering: pixelated; }
   background-color: var(--desktop);
 }
 
+/* CRT 레트로: 스캔라인 + 따뜻한 비네트 (은은하게) */
+.desktop::after, #boot::after {
+  content: ""; position: absolute; inset: 0;
+  pointer-events: none; z-index: 900;
+  background: repeating-linear-gradient(0deg, rgba(0,0,0,.05) 0 1px, transparent 1px 3px);
+}
+.desktop::before {
+  content: ""; position: absolute; inset: 0;
+  pointer-events: none; z-index: 899;
+  box-shadow: inset 0 0 90px rgba(40,28,16,.28);
+}
+
 /* ===== 계절 애니메이션 배경화면 ===== */
 .wp { position: absolute; inset: 0; overflow: hidden; display: none; pointer-events: none; z-index: 0; }
 .wp.active { display: block; }
@@ -112,6 +124,10 @@ img { image-rendering: pixelated; }
 /* 여름 해 광선 회전 */
 .spin { animation: spin 60s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* 겨울 별 반짝임 */
+.star { animation: twinkle 2.8s ease-in-out infinite; animation-delay: var(--sdelay, 0s); }
+@keyframes twinkle { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
 
 /* 새: 하늘을 가로지르며 위아래로 살짝 물결 */
 .bird { animation: fly var(--bdur, 36s) linear infinite; animation-delay: var(--bdelay, 0s); }
@@ -140,30 +156,30 @@ img { image-rendering: pixelated; }
   100% { transform: translate(var(--dx, -40px), 105vh) rotate(var(--rot, 180deg)); opacity: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .cloud, .spin, .petal, .leaf, .flake, .bird { animation: none; }
+  .cloud, .spin, .petal, .leaf, .flake, .bird, .star { animation: none; }
 }
 .icons {
   position: absolute; top: 16px; left: 16px;
   display: flex; flex-direction: column; gap: 14px;
 }
 .icon {
-  width: 84px;
+  width: 98px;
   background: transparent; border: none; cursor: pointer;
   display: flex; flex-direction: column; align-items: center; gap: 6px;
-  font-family: inherit; color: var(--ink); font-size: 12px;
+  font-family: inherit; color: var(--ink); font-size: 13px;
   padding: 4px;
 }
 .icon:hover, .icon:focus { background: rgba(255,255,255,.28); outline: none; }
 .icon:hover .label, .icon:focus .label { background: var(--peach); box-shadow: 0 0 0 2px var(--peach); }
 .icon:focus-visible { outline: 2px dashed var(--ink); }
 .icon .glyph {
-  width: 50px; height: 44px;
+  width: 62px; height: 54px;
   background: var(--cream);
   border: 2px solid var(--ink);
   box-shadow: inset 1px 1px 0 var(--bevel-light), 2px 2px 0 rgba(58,42,24,.35);
   display: flex; align-items: center; justify-content: center;
 }
-.icon .glyph svg { display: block; }
+.icon .glyph svg { display: block; width: 46px; height: 38px; }
 .icon .label {
   text-align: center; line-height: 1.25;
   text-shadow: 0 1px 0 rgba(251,243,226,.6);
@@ -356,8 +372,10 @@ img { image-rendering: pixelated; }
     background: var(--cream-2); border: 2px solid var(--cocoa);
     padding: 10px 12px; font-size: 15px;
   }
-  .mascot-wrap { position: static; margin: 18px auto 0; }
-  .desktop { background-size: cover; }
+  .desktop::before, .desktop::after { display: none; }
+  .wp { position: fixed; inset: 0; }
+  .icons { position: relative; z-index: 1; top: 0; left: 0; }
+  .mascot-wrap { position: relative; z-index: 1; margin: 18px auto 0; }
   .window {
     position: fixed; inset: 26px 8px 40px; width: auto;
     max-height: none; transform: none !important; left: 8px !important; top: 26px !important;
