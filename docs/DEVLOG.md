@@ -88,4 +88,30 @@
   - 검증: 여름(자동)·겨울(눈 낙하) 스샷 확인, `npm run build` 통과. (미리보기 렌더러가 HMR 반복으로 일시 정지 → 서버 재시작으로 해결.)
 - **상태**: 배경 애니메이션 완료. 씬 아트는 계절별로 계속 다듬을 수 있음.
 
+### [배포] GitHub 업로드
+- **사용자 프롬프트(요약)**: "이제 깃허브에 올리고 배포해줘." + 저장소 직접 생성 후 URL 전달.
+- **Claude의 변경사항**:
+  - 로컬 git 저장소 초기화(main), `.claude/settings.local.json`은 추적 제외, 초기 커밋 2개 작성.
+  - 사용자가 직접 만든 저장소 `https://github.com/tacocat404/Tacocat-Blog` 를 remote(origin)로 추가하고 `git push -u origin main` 성공(저장된 자격증명 사용).
+  - 참고: 사용자는 CLI 자동 설치/로그인 자동화를 원치 않아, 계정·저장소 생성은 본인이 처리(메모리에 선호 기록).
+- **다음 단계**: Vercel에서 이 저장소 import → 자동 배포 → 404Tacocat.com 도메인 연결.
+
+### [배포] Vercel 배포 완료 — 사이트 공개
+- **사용자 프롬프트(요약)**: Vercel 배포 완료, 주소 전달 ("끝났어").
+- **Claude의 변경사항/확인**:
+  - 공개 production 주소 **https://tacocat-blog.vercel.app** 에서 사이트 정상 렌더 확인(404 Tacocat OS UI·5개 섹션·예시 콘텐츠).
+  - 사용자가 준 `...lk7w93oad-...vercel.app`(해시 포함)는 Vercel Deployment Protection이 걸린 preview 링크 → SSO로 리다이렉트됨. 공유용은 깔끔한 production 주소 사용.
+  - 이후 `git push` 시 Vercel 자동 재배포되는 파이프라인 확보(자동화 기반).
+- **다음 단계**: 404Tacocat.com 커스텀 도메인 연결(Vercel Settings→Domains + 등록기관 DNS). 이후 실제 콘텐츠 채우기 / Claude 자동화.
+
+### [구현] 시니어 관점 품질 감사 + 개선 루프 (5라운드)
+- **사용자 프롬프트(요약)**: "시니어 웹 프로그래머이자 포트폴리오 심사관 관점으로 부족한 부분을 보완하고, 애니메이션·디자인 개선을 스스로 검사·판단·평가 루프를 돌며 해줘."
+- **Claude의 변경사항**:
+  - **R1 — SEO**: `Base.astro`에 meta description·OG/트위터 카드·canonical·hreflang(한/영)·theme-color. `@astrojs/sitemap` 추가, `robots.txt`, OG 이미지(`public/og.png`, System.Drawing으로 픽셀 스타일 1200×630 생성). 폰트 `@import`→`<link>`(렌더 블로킹 제거). site를 실제 배포 주소로 수정.
+  - **R2 — 접근성/UX**: Esc로 창·시작메뉴 닫기, 창=role dialog+포커스 이동, 닫기 버튼 span→button(키보드 가능), 재방문 시 부팅 스킵(sessionStorage)+reduced-motion 시 스킵, 드래그를 포인터 이벤트로 전환(터치 지원)+화면 밖 이탈 클램프, `setPointerCapture` 예외 가드(실버그 수정), 창 닫힘 애니메이션, 아이콘 호버 라벨 하이라이트, 시작메뉴 팝 애니메이션+aria-expanded.
+  - **R3 — 완성도**: 브랜드 개그를 살린 **404 페이지**("이 페이지는 고양이가 먹었어요"), 저장소 **README.md**, `astro check` 도입(타입 에러 12→0, 제네릭 `T["data"]`로 any 제거), `npm run check` 스크립트.
+  - **R4 — 디자인/애니메이션**: 마스코트 인라인 SVG화 + **눈 깜빡임**(앉은 채 유지, reduced-motion 존중), 봄 2·여름 3마리 **픽셀 새**가 물결치며 하늘 횡단.
+  - **R5 — 통합 검증**: 타입 0 에러, 빌드 통과(404.html·sitemap 포함), 애니메이션 엔진 조회로 7개 전부 실행 확인(spin1·drift2·fly3·blink1), 모바일 레이아웃 확인, 콘솔 에러 0.
+  - 참고: 미리보기 스크린샷 도구가 간헐 정지 → 텍스트 기반 검증(a11y 트리·getAnimations)으로 대체.
+
 <!-- 새 항목은 이 아래에 계속 추가 -->

@@ -1,4 +1,4 @@
-@import url("https://cdn.jsdelivr.net/gh/quiple/galmuri/dist/galmuri.css");
+/* 폰트(Galmuri)는 Base.astro의 <link>로 로드 — @import는 렌더링을 막아서 제거 */
 
 /* ===== 팔레트 (커스텀 코지 레트로) ===== */
 :root {
@@ -113,6 +113,16 @@ img { image-rendering: pixelated; }
 .spin { animation: spin 60s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* 새: 하늘을 가로지르며 위아래로 살짝 물결 */
+.bird { animation: fly var(--bdur, 36s) linear infinite; animation-delay: var(--bdelay, 0s); }
+@keyframes fly {
+  0%   { transform: translate(-40px, 0); }
+  25%  { transform: translate(120px, -10px); }
+  50%  { transform: translate(280px, 5px); }
+  75%  { transform: translate(440px, -8px); }
+  100% { transform: translate(600px, 0); }
+}
+
 /* 낙하 입자 (꽃잎/낙엽/눈) */
 .petal, .leaf, .flake {
   position: absolute; top: -24px; display: block;
@@ -130,7 +140,7 @@ img { image-rendering: pixelated; }
   100% { transform: translate(var(--dx, -40px), 105vh) rotate(var(--rot, 180deg)); opacity: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .cloud, .spin, .petal, .leaf, .flake { animation: none; }
+  .cloud, .spin, .petal, .leaf, .flake, .bird { animation: none; }
 }
 .icons {
   position: absolute; top: 16px; left: 16px;
@@ -144,6 +154,8 @@ img { image-rendering: pixelated; }
   padding: 4px;
 }
 .icon:hover, .icon:focus { background: rgba(255,255,255,.28); outline: none; }
+.icon:hover .label, .icon:focus .label { background: var(--peach); box-shadow: 0 0 0 2px var(--peach); }
+.icon:focus-visible { outline: 2px dashed var(--ink); }
 .icon .glyph {
   width: 50px; height: 44px;
   background: var(--cream);
@@ -172,6 +184,19 @@ img { image-rendering: pixelated; }
   z-index: -1;
 }
 .mascot { width: 88px; height: auto; display: block; }
+/* 눈 깜빡임 — 앉은 채로 눈만 */
+.mascot .eyes {
+  transform-box: fill-box;
+  transform-origin: 50% 70%;
+  animation: blink 5.5s infinite;
+}
+@keyframes blink {
+  0%, 91%, 100% { transform: scaleY(1); }
+  93%, 96% { transform: scaleY(0.12); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mascot .eyes { animation: none; }
+}
 
 /* ===== 창(window) ===== */
 .window {
@@ -192,8 +217,14 @@ img { image-rendering: pixelated; }
   from { transform: translateY(6px) scale(.98); opacity: .4; }
   to   { transform: translateY(0) scale(1); opacity: 1; }
 }
+.window.open.closing { animation: winclose .1s steps(2) forwards; }
+@keyframes winclose {
+  from { transform: translateY(0) scale(1); opacity: 1; }
+  to   { transform: translateY(5px) scale(.96); opacity: 0; }
+}
 .window .titlebar {
   height: 28px; background: var(--peach);
+  touch-action: none; user-select: none;
   border-bottom: 2px solid var(--peach-dark);
   display: flex; align-items: center; gap: 8px;
   padding: 0 8px; cursor: move;
@@ -213,7 +244,9 @@ img { image-rendering: pixelated; }
   color: var(--ink); font-size: 12px; line-height: 12px;
   display: flex; align-items: center; justify-content: center;
   box-shadow: inset 1px 1px 0 var(--bevel-light);
+  padding: 0; font-family: inherit;
 }
+.window .titlebar .x:focus-visible { outline: 2px dashed var(--ink); outline-offset: 1px; }
 .window .titlebar .x:hover { background: #f2a3a3; }
 .window .titlebar .x:active { box-shadow: inset 2px 2px 0 rgba(58,42,24,.4); }
 .window .body {
@@ -295,7 +328,11 @@ img { image-rendering: pixelated; }
   box-shadow: inset 2px 2px 0 var(--bevel-light), inset -2px -2px 0 var(--bevel-dark);
   display: none; flex-direction: column; z-index: 60;
 }
-.start-menu.open { display: flex; }
+.start-menu.open { display: flex; animation: menupop .1s steps(2) both; }
+@keyframes menupop {
+  from { transform: translateY(8px); opacity: .5; }
+  to   { transform: translateY(0); opacity: 1; }
+}
 .start-menu button {
   font-family: inherit; font-size: 13px; text-align: left;
   background: transparent; border: none; color: var(--ink);

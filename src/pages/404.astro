@@ -1,0 +1,49 @@
+---
+import Base from "../layouts/Base.astro";
+---
+
+<Base lang="ko" title="404 — 404 Tacocat OS" description="페이지를 찾을 수 없습니다 · Page not found">
+  <div class="err-desktop">
+    <section class="window open err-window" role="alertdialog" aria-label="404">
+      <header class="titlebar"><span class="t">오류 · Error</span></header>
+      <div class="body err-body">
+        <img class="err-mascot" src="/mascot.svg" alt="" width="72" height="82" />
+        <p class="err-code">404</p>
+        <p class="err-msg">이 페이지는 고양이가 먹었어요.</p>
+        <p class="err-msg en">A cat ate this page.</p>
+        <div class="err-actions">
+          <a class="start-btn" href="/"><span class="dot"></span>바탕화면으로</a>
+          <a class="start-btn" href="/en/"><span class="dot"></span>Back to desktop</a>
+        </div>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<style>
+  body { overflow: auto; }
+  .err-desktop {
+    min-height: 100dvh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    background: var(--desktop);
+    background-image:
+      radial-gradient(rgba(107,84,64,.25) 1.5px, transparent 1.5px),
+      radial-gradient(rgba(251,243,226,.3) 1.5px, transparent 1.5px);
+    background-size: 18px 18px;
+    background-position: 0 0, 9px 9px;
+  }
+  .err-window {
+    position: static; display: flex;
+    width: min(420px, 94vw); max-height: none;
+    animation: none;
+  }
+  .err-window .titlebar { cursor: default; }
+  .err-body { text-align: center; padding: 26px 18px; }
+  .err-mascot { display: block; margin: 0 auto 6px; transform: rotate(8deg); }
+  .err-code { font-size: 56px; margin: 6px 0 2px; color: var(--spark); }
+  .err-msg { margin: 2px 0; font-size: 15px; }
+  .err-msg.en { color: var(--cocoa); font-size: 13px; }
+  .err-actions { display: flex; gap: 10px; justify-content: center; margin-top: 18px; flex-wrap: wrap; }
+  .err-actions .start-btn { text-decoration: none; }
+</style>

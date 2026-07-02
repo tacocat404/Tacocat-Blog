@@ -1,5 +1,5 @@
 ---
-import { getCollection, render } from "astro:content";
+import { getCollection, render, type CollectionEntry, type CollectionKey } from "astro:content";
 import { t, type Lang } from "../i18n/ui";
 import Wallpaper from "./Wallpaper.astro";
 
@@ -21,21 +21,24 @@ const icons: Record<string, string> = {
   about: `<svg viewBox="0 0 24 20" shape-rendering="crispEdges" width="36" height="30"><rect x="10" y="2" width="4" height="5" fill="#d97757"/><rect x="10" y="13" width="4" height="5" fill="#d97757"/><rect x="2" y="8" width="5" height="4" fill="#d97757"/><rect x="17" y="8" width="5" height="4" fill="#d97757"/><rect x="7" y="7" width="10" height="6" fill="#e0855f"/><rect x="9" y="8" width="2" height="2" fill="#3a2218"/><rect x="13" y="8" width="2" height="2" fill="#3a2218"/></svg>`,
 };
 
-const byOrder = (a: any, b: any) => (a.data.order ?? 0) - (b.data.order ?? 0);
+type Entry = CollectionEntry<CollectionKey>;
+const byOrder = (a: Entry, b: Entry) => (a.data.order ?? 0) - (b.data.order ?? 0);
 
 const portfolio = (await getCollection("portfolio")).sort(byOrder);
 const awards = (await getCollection("awards")).sort(byOrder);
 const activities = (await getCollection("activities")).sort(byOrder);
 const study = (await getCollection("study")).sort(byOrder);
 
-// 각 항목의 본문(Content) 미리 렌더
-const render4 = async (items: any[]) =>
-  Promise.all(items.map(async (e) => ({ data: e.data, Content: (await render(e)).Content })));
+// 각 항목의 본문(Content) 미리 렌더 (컬렉션별 데이터 타입 보존)
+const withContent = async <T extends Entry>(items: T[]) =>
+  Promise.all(
+    items.map(async (e) => ({ data: e.data as T["data"], Content: (await render(e)).Content }))
+  );
 
-const pf = await render4(portfolio);
-const aw = await render4(awards);
-const ac = await render4(activities);
-const st = await render4(study);
+const pf = await withContent(portfolio);
+const aw = await withContent(awards);
+const ac = await withContent(activities);
+const st = await withContent(study);
 ---
 
 <!-- 부팅 화면 -->
@@ -83,7 +86,7 @@ const st = await render4(study);
 
   <!-- 포트폴리오 창 -->
   <section class="window" data-app="portfolio" style="left:130px; top:30px;">
-    <header class="titlebar"><span class="ico" set:html={icons.portfolio} /><span class="t">{tr.apps.portfolio}</span><span class="x" data-close>x</span></header>
+    <header class="titlebar"><span class="ico" set:html={icons.portfolio} /><span class="t">{tr.apps.portfolio}</span><button class="x" data-close aria-label={tr.close}>x</button></header>
     <div class="body">
       {pf.map((e) => (
         <article class="entry">
@@ -93,7 +96,7 @@ const st = await render4(study);
           <div>{e.data.tech.map((x: string) => <span class="tech-chip">{x}</span>)}</div>
           <div class="prose"><e.Content /></div>
           {e.data.links.length > 0 && (
-            <div class="links">{e.data.links.map((l: any) => <a href={l.url} target="_blank" rel="noopener">▸ {l.label}</a>)}</div>
+            <div class="links">{e.data.links.map((l) => <a href={l.url} target="_blank" rel="noopener">▸ {l.label}</a>)}</div>
           )}
         </article>
       ))}
@@ -102,7 +105,7 @@ const st = await render4(study);
 
   <!-- 수상 창 -->
   <section class="window" data-app="awards" style="left:160px; top:60px;">
-    <header class="titlebar"><span class="ico" set:html={icons.awards} /><span class="t">{tr.apps.awards}</span><span class="x" data-close>x</span></header>
+    <header class="titlebar"><span class="ico" set:html={icons.awards} /><span class="t">{tr.apps.awards}</span><button class="x" data-close aria-label={tr.close}>x</button></header>
     <div class="body">
       {aw.map((e) => (
         <article class="entry">
@@ -117,7 +120,7 @@ const st = await render4(study);
 
   <!-- 활동 창 -->
   <section class="window" data-app="activities" style="left:190px; top:90px;">
-    <header class="titlebar"><span class="ico" set:html={icons.activities} /><span class="t">{tr.apps.activities}</span><span class="x" data-close>x</span></header>
+    <header class="titlebar"><span class="ico" set:html={icons.activities} /><span class="t">{tr.apps.activities}</span><button class="x" data-close aria-label={tr.close}>x</button></header>
     <div class="body">
       {ac.map((e) => (
         <article class="entry">
@@ -132,7 +135,7 @@ const st = await render4(study);
 
   <!-- 공부기록 창 -->
   <section class="window" data-app="study" style="left:220px; top:120px;">
-    <header class="titlebar"><span class="ico" set:html={icons.study} /><span class="t">{tr.apps.study}</span><span class="x" data-close>x</span></header>
+    <header class="titlebar"><span class="ico" set:html={icons.study} /><span class="t">{tr.apps.study}</span><button class="x" data-close aria-label={tr.close}>x</button></header>
     <div class="body">
       {st.map((e) => (
         <article class="entry">
@@ -147,7 +150,7 @@ const st = await render4(study);
 
   <!-- About 창 -->
   <section class="window" data-app="about" style="left:250px; top:80px;">
-    <header class="titlebar"><span class="ico" set:html={icons.about} /><span class="t">{tr.apps.about}</span><span class="x" data-close>x</span></header>
+    <header class="titlebar"><span class="ico" set:html={icons.about} /><span class="t">{tr.apps.about}</span><button class="x" data-close aria-label={tr.close}>x</button></header>
     <div class="body">
       <article class="entry">
         <h3>404 Tacocat</h3>
@@ -156,7 +159,27 @@ const st = await render4(study);
     </div>
   </section>
 
-  <div class="mascot-wrap"><img class="mascot" src="/mascot.svg" alt="Claude Code mascot" /></div>
+  <div class="mascot-wrap">
+    <svg class="mascot" viewBox="0 0 88 100" shape-rendering="crispEdges" role="img" aria-label="Claude Code mascot">
+      <rect x="36" y="0" width="16" height="20" fill="#d97757"/>
+      <rect x="36" y="68" width="16" height="20" fill="#d97757"/>
+      <rect x="0" y="36" width="20" height="16" fill="#d97757"/>
+      <rect x="68" y="36" width="20" height="16" fill="#d97757"/>
+      <rect x="14" y="14" width="14" height="14" fill="#e8946f"/>
+      <rect x="60" y="14" width="14" height="14" fill="#e8946f"/>
+      <rect x="14" y="60" width="14" height="14" fill="#e8946f"/>
+      <rect x="60" y="60" width="14" height="14" fill="#e8946f"/>
+      <rect x="28" y="28" width="32" height="32" fill="#d97757"/>
+      <rect x="32" y="24" width="24" height="40" fill="#d97757"/>
+      <rect x="24" y="32" width="40" height="24" fill="#d97757"/>
+      <g class="eyes">
+        <rect x="34" y="40" width="6" height="8" fill="#3a2218"/>
+        <rect x="48" y="40" width="6" height="8" fill="#3a2218"/>
+      </g>
+      <rect x="40" y="50" width="8" height="3" fill="#3a2218"/>
+      <rect x="-2" y="92" width="92" height="8" fill="#000" opacity="0.12"/>
+    </svg>
+  </div>
 </div>
 
 <!-- 시작 메뉴 -->
@@ -170,29 +193,46 @@ const st = await render4(study);
 
 <!-- 작업표시줄 -->
 <div class="taskbar">
-  <button class="start-btn" id="start-btn"><span class="dot"></span>{tr.start}</button>
+  <button class="start-btn" id="start-btn" aria-haspopup="true" aria-expanded="false" aria-controls="start-menu"><span class="dot"></span>{tr.start}</button>
   <div class="task-items" id="task-items"></div>
   <span class="clock" id="clock-bottom">--:--</span>
 </div>
 
 <script>
-  // 부팅 화면: 진행바 채우고 끝나면(또는 클릭/키 입력) 사라짐
+  // 부팅 화면: 첫 방문에만 재생 (재방문·모션 최소화 설정 시 스킵)
   const boot = document.getElementById("boot")!;
-  const bar = boot.querySelector(".boot-bar > i") as HTMLElement;
-  let p = 0;
-  const tick = setInterval(() => {
-    p += 20;
-    bar.style.width = Math.min(p, 100) + "%";
-    if (p >= 100) clearInterval(tick);
-  }, 220);
-  const closeBoot = () => boot.classList.add("hidden");
-  setTimeout(closeBoot, 1600);
-  boot.addEventListener("click", closeBoot);
-  window.addEventListener("keydown", closeBoot, { once: true });
+  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const closeBoot = () => {
+    boot.classList.add("hidden");
+    try { sessionStorage.setItem("booted", "1"); } catch {}
+  };
+  let booted = false;
+  try { booted = !!sessionStorage.getItem("booted"); } catch {}
+  if (booted || reducedMotion) {
+    boot.classList.add("hidden");
+  } else {
+    const bar = boot.querySelector(".boot-bar > i") as HTMLElement;
+    let p = 0;
+    const tick = setInterval(() => {
+      p += 20;
+      bar.style.width = Math.min(p, 100) + "%";
+      if (p >= 100) clearInterval(tick);
+    }, 220);
+    setTimeout(closeBoot, 1600);
+    boot.addEventListener("click", closeBoot);
+    window.addEventListener("keydown", closeBoot, { once: true });
+  }
 
   // 창 열기/닫기/최소화 + 활성 창 + 작업표시줄 버튼
   const taskItems = document.getElementById("task-items")!;
   let z = 10;
+
+  // 접근성: 창 = dialog, 포커스 가능
+  document.querySelectorAll<HTMLElement>(".window").forEach((w) => {
+    w.setAttribute("role", "dialog");
+    w.setAttribute("aria-label", w.querySelector(".titlebar .t")?.textContent ?? "");
+    w.tabIndex = -1;
+  });
 
   const setActive = (win: HTMLElement | null) => {
     document.querySelectorAll(".window.open").forEach((w) => w.classList.add("inactive"));
@@ -230,15 +270,23 @@ const st = await render4(study);
   const openApp = (name: string) => {
     const win = document.querySelector<HTMLElement>(`.window[data-app="${name}"]`);
     if (!win) return;
+    win.classList.remove("closing");
     win.classList.add("open");
     makeTaskBtn(win);
     focusWin(win);
+    win.focus({ preventScroll: true });
     document.getElementById("start-menu")!.classList.remove("open");
+    document.getElementById("start-btn")!.setAttribute("aria-expanded", "false");
   };
   const closeApp = (win: HTMLElement) => {
-    win.classList.remove("open");
     taskItems.querySelector(`.task-btn[data-app="${win.dataset.app}"]`)?.remove();
     setActive(null);
+    win.classList.add("closing");
+    win.addEventListener("animationend", function h(ev) {
+      if (ev.animationName !== "winclose") return;
+      win.classList.remove("open", "closing");
+      win.removeEventListener("animationend", h);
+    });
   };
   document.querySelectorAll<HTMLElement>(".window").forEach((win) =>
     win.addEventListener("mousedown", () => focusWin(win))
@@ -256,31 +304,50 @@ const st = await render4(study);
   // 시작 메뉴 토글
   const startBtn = document.getElementById("start-btn")!;
   const startMenu = document.getElementById("start-menu")!;
+  const toggleMenu = (open: boolean) => {
+    startMenu.classList.toggle("open", open);
+    startBtn.setAttribute("aria-expanded", String(open));
+  };
   startBtn.addEventListener("click", (e) => {
     e.stopPropagation();
-    startMenu.classList.toggle("open");
+    toggleMenu(!startMenu.classList.contains("open"));
   });
-  document.addEventListener("click", () => startMenu.classList.remove("open"));
+  document.addEventListener("click", () => toggleMenu(false));
 
-  // 창 드래그 (데스크톱에서만)
+  // Esc: 시작 메뉴 → 최상단 창 순으로 닫기
+  window.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    if (startMenu.classList.contains("open")) return toggleMenu(false);
+    const wins = [...document.querySelectorAll<HTMLElement>(".window.open:not(.closing)")];
+    if (!wins.length) return;
+    const top = wins.reduce((a, b) => (+(a.style.zIndex || 0) > +(b.style.zIndex || 0) ? a : b));
+    closeApp(top);
+  });
+
+  // 창 드래그 (포인터 이벤트 = 마우스+터치, 화면 밖 이탈 방지)
   document.querySelectorAll<HTMLElement>(".window .titlebar").forEach((bar) => {
-    bar.addEventListener("mousedown", (e) => {
+    bar.addEventListener("pointerdown", (e) => {
+      if ((e.target as HTMLElement).closest("[data-close]")) return;
       if (window.matchMedia("(max-width: 640px)").matches) return;
       const win = bar.closest(".window") as HTMLElement;
-      win.style.zIndex = String(++z);
+      focusWin(win);
       const r = win.getBoundingClientRect();
       const dx = e.clientX - r.left;
       const dy = e.clientY - r.top;
-      const move = (ev: MouseEvent) => {
-        win.style.left = ev.clientX - dx + "px";
-        win.style.top = Math.max(26, ev.clientY - dy) + "px";
+      try { bar.setPointerCapture(e.pointerId); } catch {}
+      const move = (ev: PointerEvent) => {
+        const w = win.offsetWidth;
+        win.style.left = Math.min(Math.max(ev.clientX - dx, 64 - w), innerWidth - 64) + "px";
+        win.style.top = Math.min(Math.max(ev.clientY - dy, 26), innerHeight - 80) + "px";
       };
       const up = () => {
-        document.removeEventListener("mousemove", move);
-        document.removeEventListener("mouseup", up);
+        bar.removeEventListener("pointermove", move);
+        bar.removeEventListener("pointerup", up);
+        bar.removeEventListener("pointercancel", up);
       };
-      document.addEventListener("mousemove", move);
-      document.addEventListener("mouseup", up);
+      bar.addEventListener("pointermove", move);
+      bar.addEventListener("pointerup", up);
+      bar.addEventListener("pointercancel", up);
     });
   });
 
