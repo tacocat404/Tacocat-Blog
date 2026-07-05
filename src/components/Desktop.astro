@@ -1,6 +1,7 @@
 ---
 import { getCollection, render, type CollectionEntry, type CollectionKey } from "astro:content";
 import { t, type Lang } from "../i18n/ui";
+import { catInfo, sortCategories } from "../config/study";
 import Wallpaper from "./Wallpaper.astro";
 
 interface Props {
@@ -38,7 +39,25 @@ const withContent = async <T extends Entry>(items: T[]) =>
 const pf = await withContent(portfolio);
 const aw = await withContent(awards);
 const ac = await withContent(activities);
-const st = await withContent(study);
+
+// 공부기록: 분류 → (시리즈 | 단독 글) 로 그룹핑한 링크 목록
+type StudyPost = CollectionEntry<"study">;
+const byDateDesc = (a: StudyPost, b: StudyPost) =>
+  (b.data.date ?? "").localeCompare(a.data.date ?? "");
+const studySorted = [...study].sort(byDateDesc);
+const catNames = sortCategories([...new Set(studySorted.map((p) => p.data.category))]);
+const studyGroups = catNames.map((name) => {
+  const posts = studySorted.filter((p) => p.data.category === name);
+  const seriesNames = [...new Set(posts.filter((p) => p.data.series).map((p) => p.data.series!))];
+  const series = seriesNames.map((s) => ({
+    name: s,
+    posts: posts
+      .filter((p) => p.data.series === s)
+      .sort((a, b) => (a.data.seriesOrder ?? 0) - (b.data.seriesOrder ?? 0)),
+  }));
+  const single = posts.filter((p) => !p.data.series);
+  return { name, color: catInfo(name).color, count: posts.length, series, single };
+});
 ---
 
 <!-- 부팅 화면 -->
@@ -133,17 +152,37 @@ const st = await withContent(study);
     </div>
   </section>
 
-  <!-- 공부기록 창 -->
-  <section class="window" data-app="study" style="left:220px; top:120px;">
+  <!-- 공부기록 창: 분류별 글 목록 (글은 브라우저 페이지로 열림) -->
+  <section class="window" data-app="study" style="left:220px; top:60px;">
     <header class="titlebar"><span class="ico" set:html={icons.study} /><span class="t">{tr.apps.study}</span><button class="x" data-close aria-label={tr.close}>x</button></header>
     <div class="body">
-      {st.map((e) => (
-        <article class="entry">
-          <h3>{pick(e.data.title, e.data.titleEn)}</h3>
-          <div class="meta">{e.data.date}</div>
-          <div>{e.data.tags.map((x: string) => <span class="tag">#{x}</span>)}</div>
-          <div class="prose"><e.Content /></div>
-        </article>
+      {studyGroups.length === 0 && <p>아직 글이 없어요.</p>}
+      {studyGroups.map((g) => (
+        <div class="cat-group">
+          <div class="cat-head" style={`background:${g.color}`}>
+            <span class="cat-sq"></span>{g.name}
+            <span class="cat-cnt">{g.count}</span>
+          </div>
+          {g.series.map((s) => (
+            <div class="series-block">
+              <div class="series-head">▙ {s.name}</div>
+              {s.posts.map((p) => (
+                <a class="post-row" href={`/study/${p.id}/`}>
+                  <span class="post-no">{p.data.seriesOrder != null ? `#${p.data.seriesOrder}` : "·"}</span>
+                  <span class="post-title">{pick(p.data.title, p.data.titleEn)}</span>
+                  <span class="post-date">{p.data.date}</span>
+                </a>
+              ))}
+            </div>
+          ))}
+          {g.single.map((p) => (
+            <a class="post-row" href={`/study/${p.id}/`}>
+              <span class="post-no">·</span>
+              <span class="post-title">{pick(p.data.title, p.data.titleEn)}</span>
+              <span class="post-date">{p.data.date}</span>
+            </a>
+          ))}
+        </div>
       ))}
     </div>
   </section>
@@ -361,6 +400,10 @@ const st = await withContent(study);
   };
   updateClock();
   setInterval(updateClock, 10000);
+
+  // 딥링크: /?open=study 처럼 오면 해당 창을 바로 연다 (글 페이지의 '뒤로' 버튼용)
+  const openParam = new URLSearchParams(location.search).get("open");
+  if (openParam) openApp(openParam);
 
   // 계절에 맞춰 바탕화면 자동 변경 (북반구 기준)
   const seasonOf = (m: number) =>

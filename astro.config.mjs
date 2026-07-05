@@ -6,6 +6,9 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://tacocat-blog.vercel.app',
   integrations: [sitemap()],
+  markdown: {
+    shikiConfig: { theme: 'monokai' },
+  },
   i18n: {
     defaultLocale: 'ko',
     locales: ['ko', 'en'],

@@ -51,9 +51,16 @@ const study = defineCollection({
     title: z.string(),
     titleEn: z.string().optional(),
     date: z.string().optional(),
+    // 분류: 자유 문자열 — 새 분류는 frontmatter에 새 이름을 쓰면 자동으로 생긴다.
+    category: z.string().default('기타'),
+    // 시리즈 묶기 (강의/주차별 실습 등). seriesOrder로 시리즈 내 정렬.
+    series: z.string().optional(),
+    seriesOrder: z.number().optional(),
     tags: z.array(z.string()).default([]),
     summary: z.string().optional(),
     summaryEn: z.string().optional(),
+    // 노션 원본 페이지 (동기화 추적용)
+    notionUrl: z.string().optional(),
     order: z.number().default(0),
   }),
 });

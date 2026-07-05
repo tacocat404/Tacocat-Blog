@@ -297,13 +297,101 @@ img { image-rendering: pixelated; }
   display: inline-block; margin-right: 8px; font-size: 12px;
   color: var(--ink);
 }
-.prose { margin-top: 8px; }
+.prose { margin-top: 8px; line-height: 1.85; }
 .prose h1 { font-size: 17px; margin: .8em 0 .3em; }
-.prose h2 { font-size: 16px; margin: .8em 0 .3em; }
-.prose h3 { font-size: 15px; margin: .7em 0 .3em; }
-.prose p { margin: .5em 0; }
-.prose ul { margin: .4em 0; padding-left: 1.3em; }
+.prose h2 {
+  font-size: 17px; margin: 1.4em 0 .4em;
+  padding: 4px 10px; background: var(--cream-2);
+  border-left: 5px solid var(--peach);
+}
+.prose h3 { font-size: 15px; margin: 1.1em 0 .3em; color: var(--cocoa-dark); }
+.prose p { margin: .6em 0; }
+.prose ul, .prose ol { margin: .4em 0; padding-left: 1.4em; }
+.prose li { margin: .25em 0; }
 .prose a { color: #185fa5; }
+
+/* 인라인 코드 */
+.prose :not(pre) > code {
+  background: var(--cream-2); border: 1px solid var(--cocoa);
+  padding: 0 5px; font-size: .92em;
+  font-family: Consolas, "Courier New", monospace;
+}
+/* 코드 블록: 픽셀 터미널 프레임 */
+.prose pre {
+  border: 3px solid var(--ink);
+  box-shadow: 3px 3px 0 rgba(58,42,24,.3);
+  padding: 34px 14px 14px;
+  margin: 1em 0;
+  overflow-x: auto;
+  position: relative;
+  font-size: 13px; line-height: 1.6;
+  border-radius: 0;
+}
+.prose pre::before {
+  content: "▮ CODE";
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 22px; line-height: 22px; padding: 0 10px;
+  background: var(--cocoa); color: var(--cream);
+  font-size: 11px; letter-spacing: 1px;
+  font-family: "Galmuri11", monospace;
+}
+.prose pre code { background: none; border: none; padding: 0; font-family: Consolas, "Courier New", monospace; }
+
+/* 이미지(짤): 픽셀 액자 */
+.prose img {
+  max-width: 100%; height: auto; display: block;
+  border: 3px solid var(--ink);
+  box-shadow: 4px 4px 0 rgba(58,42,24,.28);
+  margin: 1em auto;
+  image-rendering: auto;
+}
+.prose img + em { display: block; text-align: center; font-size: 12px; color: var(--cocoa); margin-top: -6px; }
+
+/* 표 */
+.prose table { border-collapse: collapse; margin: 1em 0; font-size: 13px; width: 100%; }
+.prose th, .prose td { border: 2px solid var(--cocoa); padding: 6px 10px; text-align: left; vertical-align: top; }
+.prose th { background: var(--cream-2); }
+.prose tr:nth-child(even) td { background: rgba(233,220,194,.4); }
+
+/* 인용 */
+.prose blockquote {
+  margin: .9em 0; padding: 8px 14px;
+  background: var(--cream-2);
+  border-left: 5px solid var(--peach);
+  border-radius: 0;
+}
+.prose blockquote p { margin: .3em 0; }
+
+/* ===== 공부기록 창: 분류별 글 목록 ===== */
+.cat-group { margin-bottom: 16px; }
+.cat-head {
+  display: flex; align-items: center; gap: 8px;
+  border: 2px solid var(--ink);
+  padding: 5px 10px; font-size: 14px; color: var(--ink);
+  box-shadow: inset 1px 1px 0 rgba(255,255,255,.4), 2px 2px 0 rgba(58,42,24,.25);
+}
+.cat-sq { width: 10px; height: 10px; background: var(--ink); opacity: .55; }
+.cat-cnt {
+  margin-left: auto; font-size: 12px;
+  background: var(--cream); border: 1px solid var(--ink);
+  padding: 0 7px;
+}
+.series-block { margin: 8px 0 4px; }
+.series-head { font-size: 12px; color: var(--cocoa-dark); padding: 3px 4px 2px; }
+.post-row {
+  display: flex; align-items: baseline; gap: 8px;
+  padding: 7px 8px; margin: 2px 0;
+  border: 2px solid transparent;
+  color: var(--ink); text-decoration: none; font-size: 14px;
+}
+.post-row:hover, .post-row:focus-visible {
+  background: var(--cream-2); border-color: var(--cocoa);
+  outline: none;
+}
+.post-row .post-no { font-size: 12px; color: var(--cocoa); min-width: 22px; }
+.post-row .post-title { flex: 1; }
+.post-row:hover .post-title { text-decoration: underline; }
+.post-row .post-date { font-size: 11px; color: var(--cocoa); white-space: nowrap; }
 
 /* ===== 작업표시줄 ===== */
 .taskbar {
