@@ -1,26 +1,9 @@
 ---
 import { getCollection, render, type CollectionEntry, type CollectionKey } from "astro:content";
-import { t, type Lang } from "../i18n/ui";
+import { ui as tr } from "../i18n/ui";
+import { icons } from "../config/icons";
 import { catInfo, sortCategories } from "../config/study";
 import Wallpaper from "./Wallpaper.astro";
-
-interface Props {
-  lang: Lang;
-}
-const { lang } = Astro.props;
-const tr = t(lang);
-const otherLangPath = lang === "ko" ? "/en/" : "/";
-
-const pick = (ko?: string, en?: string) => (lang === "en" && en ? en : ko ?? "");
-
-// 섹션별 픽셀 아이콘 (인라인 SVG)
-const icons: Record<string, string> = {
-  portfolio: `<svg viewBox="0 0 24 20" shape-rendering="crispEdges" width="36" height="30"><rect x="2" y="3" width="9" height="4" fill="#3a6a9a"/><rect x="1" y="6" width="22" height="12" fill="#7fb3e0"/><rect x="1" y="6" width="22" height="3" fill="#a9d4f2"/><rect x="1" y="6" width="22" height="12" fill="none" stroke="#274a6a" stroke-width="1"/></svg>`,
-  awards: `<svg viewBox="0 0 24 20" shape-rendering="crispEdges" width="36" height="30"><rect x="4" y="3" width="3" height="5" fill="#c9902a"/><rect x="17" y="3" width="3" height="5" fill="#c9902a"/><rect x="7" y="2" width="10" height="7" fill="#f0c04a"/><rect x="7" y="2" width="10" height="7" fill="none" stroke="#8a5a1a" stroke-width="1"/><rect x="10" y="9" width="4" height="4" fill="#c9902a"/><rect x="6" y="13" width="12" height="3" fill="#8a5a1a"/></svg>`,
-  activities: `<svg viewBox="0 0 24 20" shape-rendering="crispEdges" width="36" height="30"><rect x="7" y="16" width="10" height="3" fill="#7a4a22"/><rect x="11" y="7" width="2" height="9" fill="#3f8f3a"/><rect x="5" y="5" width="6" height="5" fill="#5abe4a"/><rect x="13" y="4" width="6" height="5" fill="#6ace5a"/></svg>`,
-  study: `<svg viewBox="0 0 24 20" shape-rendering="crispEdges" width="36" height="30"><rect x="3" y="5" width="9" height="12" fill="#f7efdd"/><rect x="12" y="5" width="9" height="12" fill="#ece0c6"/><rect x="11" y="4" width="2" height="14" fill="#b85a7a"/><rect x="5" y="8" width="5" height="1" fill="#b8a888"/><rect x="5" y="11" width="5" height="1" fill="#b8a888"/><rect x="14" y="8" width="5" height="1" fill="#b8a888"/><rect x="14" y="11" width="5" height="1" fill="#b8a888"/><rect x="3" y="5" width="18" height="12" fill="none" stroke="#8a3a5a" stroke-width="1"/></svg>`,
-  about: `<svg viewBox="0 0 24 20" shape-rendering="crispEdges" width="36" height="30"><rect x="10" y="2" width="4" height="5" fill="#d97757"/><rect x="10" y="13" width="4" height="5" fill="#d97757"/><rect x="2" y="8" width="5" height="4" fill="#d97757"/><rect x="17" y="8" width="5" height="4" fill="#d97757"/><rect x="7" y="7" width="10" height="6" fill="#e0855f"/><rect x="9" y="8" width="2" height="2" fill="#3a2218"/><rect x="13" y="8" width="2" height="2" fill="#3a2218"/></svg>`,
-};
 
 type Entry = CollectionEntry<CollectionKey>;
 const byOrder = (a: Entry, b: Entry) => (a.data.order ?? 0) - (b.data.order ?? 0);
@@ -28,7 +11,7 @@ const byOrder = (a: Entry, b: Entry) => (a.data.order ?? 0) - (b.data.order ?? 0
 const portfolio = (await getCollection("portfolio")).sort(byOrder);
 const awards = (await getCollection("awards")).sort(byOrder);
 const activities = (await getCollection("activities")).sort(byOrder);
-const study = (await getCollection("study")).sort(byOrder);
+const study = await getCollection("study");
 
 // 각 항목의 본문(Content) 미리 렌더 (컬렉션별 데이터 타입 보존)
 const withContent = async <T extends Entry>(items: T[]) =>
@@ -58,6 +41,9 @@ const studyGroups = catNames.map((name) => {
   const single = posts.filter((p) => !p.data.series);
   return { name, color: catInfo(name).color, count: posts.length, series, single };
 });
+
+// 바탕화면 아이콘/시작 메뉴 공용 앱 목록
+const apps = ["portfolio", "awards", "activities", "study", "about"] as const;
 ---
 
 <!-- 부팅 화면 -->
@@ -73,7 +59,6 @@ const studyGroups = catNames.map((name) => {
 <div class="menubar">
   <span>{tr.osName}</span>
   <span class="spacer"></span>
-  <a class="lang-btn" href={otherLangPath}>{tr.langToggle}</a>
   <span class="clock" id="clock-top">--:--</span>
 </div>
 
@@ -81,26 +66,12 @@ const studyGroups = catNames.map((name) => {
 <div class="desktop">
   <Wallpaper />
   <div class="icons">
-    <button class="icon" data-open="portfolio">
-      <span class="glyph" set:html={icons.portfolio} />
-      <span class="label">{tr.apps.portfolio}</span>
-    </button>
-    <button class="icon" data-open="awards">
-      <span class="glyph" set:html={icons.awards} />
-      <span class="label">{tr.apps.awards}</span>
-    </button>
-    <button class="icon" data-open="activities">
-      <span class="glyph" set:html={icons.activities} />
-      <span class="label">{tr.apps.activities}</span>
-    </button>
-    <button class="icon" data-open="study">
-      <span class="glyph" set:html={icons.study} />
-      <span class="label">{tr.apps.study}</span>
-    </button>
-    <button class="icon" data-open="about">
-      <span class="glyph" set:html={icons.about} />
-      <span class="label">{tr.apps.about}</span>
-    </button>
+    {apps.map((app) => (
+      <button class="icon" data-open={app}>
+        <span class="glyph" set:html={icons[app]} />
+        <span class="label">{tr.apps[app]}</span>
+      </button>
+    ))}
   </div>
 
   <!-- 포트폴리오 창 -->
@@ -109,9 +80,9 @@ const studyGroups = catNames.map((name) => {
     <div class="body">
       {pf.map((e) => (
         <article class="entry">
-          <h3>{pick(e.data.title, e.data.titleEn)}</h3>
+          <h3>{e.data.title}</h3>
           <div class="meta">{e.data.period}</div>
-          <p class="summary">{pick(e.data.summary, e.data.summaryEn)}</p>
+          <p class="summary">{e.data.summary}</p>
           <div>{e.data.tech.map((x: string) => <span class="tech-chip">{x}</span>)}</div>
           <div class="prose"><e.Content /></div>
           {e.data.links.length > 0 && (
@@ -128,9 +99,9 @@ const studyGroups = catNames.map((name) => {
     <div class="body">
       {aw.map((e) => (
         <article class="entry">
-          <h3>{pick(e.data.title, e.data.titleEn)}</h3>
+          <h3>{e.data.title}</h3>
           <div class="meta">{e.data.org} · {e.data.date} · {e.data.rank}</div>
-          <p class="summary">{pick(e.data.summary, e.data.summaryEn)}</p>
+          <p class="summary">{e.data.summary}</p>
           <div class="prose"><e.Content /></div>
         </article>
       ))}
@@ -143,9 +114,9 @@ const studyGroups = catNames.map((name) => {
     <div class="body">
       {ac.map((e) => (
         <article class="entry">
-          <h3>{pick(e.data.title, e.data.titleEn)}</h3>
+          <h3>{e.data.title}</h3>
           <div class="meta">{e.data.role} · {e.data.period}</div>
-          <p class="summary">{pick(e.data.summary, e.data.summaryEn)}</p>
+          <p class="summary">{e.data.summary}</p>
           <div class="prose"><e.Content /></div>
         </article>
       ))}
@@ -169,7 +140,7 @@ const studyGroups = catNames.map((name) => {
               {s.posts.map((p) => (
                 <a class="post-row" href={`/study/${p.id}/`}>
                   <span class="post-no">{p.data.seriesOrder != null ? `#${p.data.seriesOrder}` : "·"}</span>
-                  <span class="post-title">{pick(p.data.title, p.data.titleEn)}</span>
+                  <span class="post-title">{p.data.title}</span>
                   <span class="post-date">{p.data.date}</span>
                 </a>
               ))}
@@ -178,7 +149,7 @@ const studyGroups = catNames.map((name) => {
           {g.single.map((p) => (
             <a class="post-row" href={`/study/${p.id}/`}>
               <span class="post-no">·</span>
-              <span class="post-title">{pick(p.data.title, p.data.titleEn)}</span>
+              <span class="post-title">{p.data.title}</span>
               <span class="post-date">{p.data.date}</span>
             </a>
           ))}
@@ -223,11 +194,9 @@ const studyGroups = catNames.map((name) => {
 
 <!-- 시작 메뉴 -->
 <div class="start-menu" id="start-menu">
-  <button data-open="portfolio"><span class="mini" set:html={icons.portfolio} />{tr.apps.portfolio}</button>
-  <button data-open="awards"><span class="mini" set:html={icons.awards} />{tr.apps.awards}</button>
-  <button data-open="activities"><span class="mini" set:html={icons.activities} />{tr.apps.activities}</button>
-  <button data-open="study"><span class="mini" set:html={icons.study} />{tr.apps.study}</button>
-  <button data-open="about"><span class="mini" set:html={icons.about} />{tr.apps.about}</button>
+  {apps.map((app) => (
+    <button data-open={app}><span class="mini" set:html={icons[app]} />{tr.apps[app]}</button>
+  ))}
 </div>
 
 <!-- 작업표시줄 -->
@@ -238,182 +207,5 @@ const studyGroups = catNames.map((name) => {
 </div>
 
 <script>
-  // 부팅 화면: 첫 방문에만 재생 (재방문·모션 최소화 설정 시 스킵)
-  const boot = document.getElementById("boot")!;
-  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const closeBoot = () => {
-    boot.classList.add("hidden");
-    try { sessionStorage.setItem("booted", "1"); } catch {}
-  };
-  let booted = false;
-  try { booted = !!sessionStorage.getItem("booted"); } catch {}
-  if (booted || reducedMotion) {
-    boot.classList.add("hidden");
-  } else {
-    const bar = boot.querySelector(".boot-bar > i") as HTMLElement;
-    let p = 0;
-    const tick = setInterval(() => {
-      p += 20;
-      bar.style.width = Math.min(p, 100) + "%";
-      if (p >= 100) clearInterval(tick);
-    }, 220);
-    setTimeout(closeBoot, 1600);
-    boot.addEventListener("click", closeBoot);
-    window.addEventListener("keydown", closeBoot, { once: true });
-  }
-
-  // 창 열기/닫기/최소화 + 활성 창 + 작업표시줄 버튼
-  const taskItems = document.getElementById("task-items")!;
-  let z = 10;
-
-  // 접근성: 창 = dialog, 포커스 가능
-  document.querySelectorAll<HTMLElement>(".window").forEach((w) => {
-    w.setAttribute("role", "dialog");
-    w.setAttribute("aria-label", w.querySelector(".titlebar .t")?.textContent ?? "");
-    w.tabIndex = -1;
-  });
-
-  const setActive = (win: HTMLElement | null) => {
-    document.querySelectorAll(".window.open").forEach((w) => w.classList.add("inactive"));
-    if (win) win.classList.remove("inactive");
-    document.querySelectorAll<HTMLElement>(".task-btn").forEach((b) =>
-      b.classList.toggle("active", !!win && b.dataset.app === win.dataset.app)
-    );
-  };
-  const focusWin = (win: HTMLElement) => {
-    win.style.zIndex = String(++z);
-    setActive(win);
-  };
-  const makeTaskBtn = (win: HTMLElement) => {
-    const name = win.dataset.app!;
-    if (taskItems.querySelector(`.task-btn[data-app="${name}"]`)) return;
-    const btn = document.createElement("button");
-    btn.className = "task-btn";
-    btn.dataset.app = name;
-    const icon = win.querySelector(".titlebar .ico")!.innerHTML;
-    const title = win.querySelector(".titlebar .t")!.textContent;
-    btn.innerHTML = `<span class="ti">${icon}</span>${title}`;
-    btn.addEventListener("click", () => {
-      const open = win.classList.contains("open");
-      const active = open && !win.classList.contains("inactive");
-      if (active) {
-        win.classList.remove("open"); // 최소화
-        setActive(null);
-      } else {
-        win.classList.add("open");
-        focusWin(win);
-      }
-    });
-    taskItems.appendChild(btn);
-  };
-  const openApp = (name: string) => {
-    const win = document.querySelector<HTMLElement>(`.window[data-app="${name}"]`);
-    if (!win) return;
-    win.classList.remove("closing");
-    win.classList.add("open");
-    makeTaskBtn(win);
-    focusWin(win);
-    win.focus({ preventScroll: true });
-    document.getElementById("start-menu")!.classList.remove("open");
-    document.getElementById("start-btn")!.setAttribute("aria-expanded", "false");
-  };
-  const closeApp = (win: HTMLElement) => {
-    taskItems.querySelector(`.task-btn[data-app="${win.dataset.app}"]`)?.remove();
-    setActive(null);
-    win.classList.add("closing");
-    win.addEventListener("animationend", function h(ev) {
-      if (ev.animationName !== "winclose") return;
-      win.classList.remove("open", "closing");
-      win.removeEventListener("animationend", h);
-    });
-  };
-  document.querySelectorAll<HTMLElement>(".window").forEach((win) =>
-    win.addEventListener("mousedown", () => focusWin(win))
-  );
-  document.querySelectorAll<HTMLElement>("[data-open]").forEach((el) =>
-    el.addEventListener("click", () => openApp(el.dataset.open!))
-  );
-  document.querySelectorAll<HTMLElement>("[data-close]").forEach((el) =>
-    el.addEventListener("click", (e) => {
-      e.stopPropagation();
-      closeApp(el.closest(".window") as HTMLElement);
-    })
-  );
-
-  // 시작 메뉴 토글
-  const startBtn = document.getElementById("start-btn")!;
-  const startMenu = document.getElementById("start-menu")!;
-  const toggleMenu = (open: boolean) => {
-    startMenu.classList.toggle("open", open);
-    startBtn.setAttribute("aria-expanded", String(open));
-  };
-  startBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    toggleMenu(!startMenu.classList.contains("open"));
-  });
-  document.addEventListener("click", () => toggleMenu(false));
-
-  // Esc: 시작 메뉴 → 최상단 창 순으로 닫기
-  window.addEventListener("keydown", (e) => {
-    if (e.key !== "Escape") return;
-    if (startMenu.classList.contains("open")) return toggleMenu(false);
-    const wins = [...document.querySelectorAll<HTMLElement>(".window.open:not(.closing)")];
-    if (!wins.length) return;
-    const top = wins.reduce((a, b) => (+(a.style.zIndex || 0) > +(b.style.zIndex || 0) ? a : b));
-    closeApp(top);
-  });
-
-  // 창 드래그 (포인터 이벤트 = 마우스+터치, 화면 밖 이탈 방지)
-  document.querySelectorAll<HTMLElement>(".window .titlebar").forEach((bar) => {
-    bar.addEventListener("pointerdown", (e) => {
-      if ((e.target as HTMLElement).closest("[data-close]")) return;
-      if (window.matchMedia("(max-width: 640px)").matches) return;
-      const win = bar.closest(".window") as HTMLElement;
-      focusWin(win);
-      const r = win.getBoundingClientRect();
-      const dx = e.clientX - r.left;
-      const dy = e.clientY - r.top;
-      try { bar.setPointerCapture(e.pointerId); } catch {}
-      const move = (ev: PointerEvent) => {
-        const w = win.offsetWidth;
-        win.style.left = Math.min(Math.max(ev.clientX - dx, 64 - w), innerWidth - 64) + "px";
-        win.style.top = Math.min(Math.max(ev.clientY - dy, 26), innerHeight - 80) + "px";
-      };
-      const up = () => {
-        bar.removeEventListener("pointermove", move);
-        bar.removeEventListener("pointerup", up);
-        bar.removeEventListener("pointercancel", up);
-      };
-      bar.addEventListener("pointermove", move);
-      bar.addEventListener("pointerup", up);
-      bar.addEventListener("pointercancel", up);
-    });
-  });
-
-  // 시계
-  const pad = (n: number) => String(n).padStart(2, "0");
-  const updateClock = () => {
-    const d = new Date();
-    const s = pad(d.getHours()) + ":" + pad(d.getMinutes());
-    document.getElementById("clock-top")!.textContent = s;
-    document.getElementById("clock-bottom")!.textContent = s;
-  };
-  updateClock();
-  setInterval(updateClock, 10000);
-
-  // 딥링크: /?open=study 처럼 오면 해당 창을 바로 연다 (글 페이지의 '뒤로' 버튼용)
-  const openParam = new URLSearchParams(location.search).get("open");
-  if (openParam) openApp(openParam);
-
-  // 계절에 맞춰 바탕화면 자동 변경 (북반구 기준)
-  const seasonOf = (m: number) =>
-    m >= 3 && m <= 5 ? "spring" :
-    m >= 6 && m <= 8 ? "summer" :
-    m >= 9 && m <= 11 ? "autumn" : "winter";
-  const override = new URLSearchParams(location.search).get("season");
-  const season = override ?? seasonOf(new Date().getMonth() + 1);
-  document.body.dataset.season = season;
-  document.querySelectorAll<HTMLElement>(".wp").forEach((w) =>
-    w.classList.toggle("active", w.dataset.wp === season)
-  );
+  import "../scripts/desktop";
 </script>

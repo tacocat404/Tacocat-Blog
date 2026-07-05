@@ -1,0 +1,85 @@
+/* ===== 글 본문(.prose) 스타일 =====
+   하이브리드 타이포그래피: 제목·프레임은 픽셀 폰트, 긴 본문은 가독 폰트(Pretendard). */
+
+.prose {
+  margin-top: 8px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.85;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.01em;
+}
+.prose :is(h1, h2, h3, h4) { font-family: var(--font-pixel); letter-spacing: 0; }
+.prose h1 { font-size: 17px; margin: .8em 0 .3em; }
+.prose h2 {
+  font-size: 17px; margin: 1.4em 0 .4em;
+  padding: 4px 10px; background: var(--cream-2);
+  border-left: 5px solid var(--peach);
+}
+.prose h3 { font-size: 15px; margin: 1.1em 0 .3em; color: var(--cocoa-dark); }
+.prose p { margin: .6em 0; }
+.prose ul, .prose ol { margin: .4em 0; padding-left: 1.4em; }
+.prose li { margin: .25em 0; }
+.prose a { color: #185fa5; }
+.prose strong { color: #2a1c0e; }
+
+/* 인라인 코드 */
+.prose :not(pre) > code {
+  background: var(--cream-2); border: 1px solid var(--cocoa);
+  padding: 0 5px; font-size: .92em;
+  font-family: Consolas, "Courier New", monospace;
+}
+
+/* 코드 블록: 픽셀 터미널 프레임 */
+.prose pre {
+  border: 3px solid var(--ink);
+  box-shadow: 3px 3px 0 rgba(58,42,24,.3);
+  padding: 34px 14px 14px;
+  margin: 1em 0;
+  overflow-x: auto;
+  position: relative;
+  font-size: 13px; line-height: 1.6;
+  border-radius: 0;
+}
+.prose pre::before {
+  content: "▮ CODE";
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 22px; line-height: 22px; padding: 0 10px;
+  background: var(--cocoa); color: var(--cream);
+  font-size: 11px; letter-spacing: 1px;
+  font-family: var(--font-pixel);
+}
+.prose pre code { background: none; border: none; padding: 0; font-family: Consolas, "Courier New", monospace; }
+
+/* 이미지(짤): 픽셀 액자 + 캡션 */
+.prose img {
+  max-width: 100%; height: auto; display: block;
+  border: 3px solid var(--ink);
+  box-shadow: 4px 4px 0 rgba(58,42,24,.28);
+  margin: 1em auto;
+  image-rendering: auto;
+}
+.prose img + em { display: block; text-align: center; font-size: 12px; color: var(--cocoa); margin-top: -6px; }
+
+/* 이미지 2장 나란히 (비교 짤) */
+.prose .img-pair { display: flex; gap: 12px; align-items: flex-start; margin: 1em 0; }
+.prose .img-pair img { flex: 1; min-width: 0; margin: 0; }
+@media (max-width: 640px) {
+  .prose .img-pair { flex-direction: column; }
+  .prose .img-pair img { width: 100%; }
+}
+
+/* 표 */
+.prose table { border-collapse: collapse; margin: 1em 0; font-size: 13px; width: 100%; }
+.prose th, .prose td { border: 2px solid var(--cocoa); padding: 6px 10px; text-align: left; vertical-align: top; }
+.prose th { background: var(--cream-2); }
+.prose tr:nth-child(even) td { background: rgba(233,220,194,.4); }
+
+/* 인용 */
+.prose blockquote {
+  margin: .9em 0; padding: 8px 14px;
+  background: var(--cream-2);
+  border-left: 5px solid var(--peach);
+  border-radius: 0;
+}
+.prose blockquote p { margin: .3em 0; }

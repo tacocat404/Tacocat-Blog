@@ -1,0 +1,59 @@
+/* ===== 사계절 애니메이션 배경화면 =====
+   씬 마크업은 Wallpaper.astro. 안 쓰는 계절은 desktop.ts가 DOM에서 제거한다. */
+
+.wp { position: absolute; inset: 0; overflow: hidden; display: none; pointer-events: none; z-index: 0; }
+.wp.active { display: block; }
+.wp .scene { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
+.wp .fx { position: absolute; inset: 0; overflow: hidden; }
+
+/* 구름 흐름 */
+.cloud { animation: drift var(--cdur, 50s) linear infinite; animation-delay: var(--cdelay, 0s); }
+@keyframes drift {
+  from { transform: translateX(-150px); }
+  to   { transform: translateX(560px); }
+}
+
+/* 여름 해 광선 회전 */
+.spin { animation: spin 60s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* 겨울 별 반짝임 */
+.star { animation: twinkle 2.8s ease-in-out infinite; animation-delay: var(--sdelay, 0s); }
+@keyframes twinkle { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+
+/* 새: 하늘을 가로지르며 위아래로 살짝 물결 */
+.bird { animation: fly var(--bdur, 36s) linear infinite; animation-delay: var(--bdelay, 0s); }
+@keyframes fly {
+  0%   { transform: translate(-40px, 0); }
+  25%  { transform: translate(120px, -10px); }
+  50%  { transform: translate(280px, 5px); }
+  75%  { transform: translate(440px, -8px); }
+  100% { transform: translate(600px, 0); }
+}
+
+/* 낙하 입자 (꽃잎/낙엽/눈) */
+.petal, .leaf, .flake {
+  position: absolute; top: -24px; display: block;
+  animation: fall var(--dur, 10s) linear infinite;
+  animation-delay: var(--delay, 0s);
+}
+.petal { background: #f4b8ce; box-shadow: inset -1px -1px 0 #e79bb6; }
+.leaf  { background: #d9772f; box-shadow: inset -1px -1px 0 #b45e20; }
+.flake { background: #ffffff; box-shadow: 0 0 2px rgba(255,255,255,.7); }
+@keyframes fall {
+  0%   { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  10%  { opacity: .95; }
+  90%  { opacity: .95; }
+  100% { transform: translate(var(--dx, -40px), 105vh) rotate(var(--rot, 180deg)); opacity: 0; }
+}
+
+/* 메모리/배터리: 탭이 안 보이면 배경 애니메이션 정지 (desktop.ts가 토글) */
+.bg-paused .wp *, .bg-paused .mascot .eyes { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cloud, .spin, .petal, .leaf, .flake, .bird, .star { animation: none; }
+}
+
+@media (max-width: 640px) {
+  .wp { position: fixed; inset: 0; }
+}

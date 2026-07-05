@@ -19,12 +19,12 @@
 
 ```markdown
 ---
-title: 한국어 제목
-titleEn: English title        # 영어 페이지에서 보일 제목 (없으면 한국어 그대로)
+title: 제목
 period: 2025.03 – 2025.05      # 기간 (포트폴리오/활동)
 summary: 한 줄 요약
-summaryEn: One line summary
 tech: ["도구1", "도구2"]        # 포트폴리오 전용: 사용한 기술
+category: "인공지능"            # 공부기록 전용: 분류 (인공지능/알고리즘/기타 또는 새 이름)
+series: "시리즈명"              # 공부기록 전용: 시리즈로 묶을 때
 ---
 
 여기에 본문을 자유롭게 씁니다.

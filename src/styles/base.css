@@ -1,0 +1,37 @@
+/* ===== 팔레트 + 전역 리셋 (커스텀 코지 레트로) ===== */
+:root {
+  --cream: #f5ecd9;
+  --cream-2: #e9dcc2;
+  --peach: #e9a86a;
+  --peach-dark: #c98a52;
+  --sage: #a7be9e;
+  --sky: #bbd8e2;
+  --cocoa: #8a6f55;
+  --cocoa-dark: #6b5440;
+  --ink: #3a2a18;
+  --desktop: #cdb78f;
+  --taskbar: #c2a87e;
+  --spark: #d97757;
+  --bevel-light: #fbf3e2;
+  --bevel-dark: #6b5440;
+
+  /* 폰트: UI(창틀·메뉴)는 픽셀, 긴 본문은 가독 폰트 (Base.astro에서 로드) */
+  --font-pixel: "Galmuri11", "Courier New", monospace;
+  --font-body: "Pretendard Variable", Pretendard, -apple-system, "Malgun Gothic", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: var(--font-pixel);
+  color: var(--ink);
+  background: var(--desktop);
+  -webkit-font-smoothing: none;
+  image-rendering: pixelated;
+  overflow: hidden;
+}
+
+img { image-rendering: pixelated; }

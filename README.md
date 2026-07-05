@@ -11,8 +11,8 @@
 
 - 🖥️ **데스크톱 OS UI** — 부팅 화면, 드래그 가능한 창, 작업표시줄(열린 창 버튼·최소화), 시작 메뉴
 - 🍂 **사계절 애니메이션 배경** — 접속한 날짜의 계절에 맞춰 바탕화면이 바뀌고, 구름이 흐르고 꽃잎·낙엽·눈이 내립니다 (`?season=winter`로 미리보기)
-- 🌐 **한/영 이중언어** — Astro i18n 라우팅 (`/` 한국어, `/en/` 영어)
 - ✍️ **콘텐츠 = 마크다운 파일** — 비개발자도 `src/content/`에 파일만 추가하면 글 발행 ([작성 가이드](docs/CONTENT-GUIDE.md))
+- 📖 **공부기록** — 분류/시리즈로 정리, 글은 레트로 브라우저 프레임(`/study/글이름/`)으로 열림. 노션에서 동기화 ([매뉴얼](docs/STUDY-SYNC.md))
 - ♿ **접근성** — 키보드 조작(Esc로 창 닫기, 포커스 관리), `prefers-reduced-motion` 존중, 시맨틱 dialog
 - 🚀 **자동 배포** — `main`에 push하면 Vercel이 자동 배포
 
@@ -36,17 +36,20 @@ npm run build   # 정적 빌드 (dist/)
 ```
 src/
 ├─ components/
-│  ├─ Desktop.astro    # OS 화면 전체 (창·아이콘·작업표시줄·JS)
-│  └─ Wallpaper.astro  # 사계절 애니메이션 배경
-├─ content/            # 글 (마크다운) — portfolio/awards/activities/study
-├─ i18n/ui.ts          # 한/영 UI 문구
-├─ layouts/Base.astro  # SEO 메타 포함 기본 레이아웃
-├─ pages/              # / (ko), /en/, /404
-└─ styles/pixel.css    # 픽셀 디자인 시스템
+│  ├─ Desktop.astro     # OS 화면 마크업 (창·아이콘·작업표시줄)
+│  └─ Wallpaper.astro   # 사계절 애니메이션 배경 씬
+├─ scripts/desktop.ts   # OS 클라이언트 로직 (창 관리·드래그·계절)
+├─ config/              # 아이콘 SVG, 공부기록 분류 설정
+├─ content/             # 글 (마크다운) — portfolio/awards/activities/study
+├─ i18n/ui.ts           # UI 문구
+├─ layouts/Base.astro   # SEO 메타 포함 기본 레이아웃
+├─ pages/               # /, /study/[slug], /404
+└─ styles/              # pixel.css(진입) → base/os/wallpaper/prose 분할
 docs/
-├─ PLAN.md             # 기획안
-├─ DEVLOG.md           # 프롬프트↔변경사항 개발 로그
-└─ CONTENT-GUIDE.md    # 비개발자용 글쓰기 가이드
+├─ PLAN.md              # 기획안
+├─ DEVLOG.md            # 프롬프트↔변경사항 개발 로그
+├─ CONTENT-GUIDE.md     # 비개발자용 글쓰기 가이드
+└─ STUDY-SYNC.md        # 노션→블로그 동기화 매뉴얼
 ```
 
 ## 크레딧

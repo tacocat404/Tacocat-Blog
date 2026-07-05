@@ -15,15 +15,15 @@ notionUrl: "https://app.notion.com/p/38807509803280b49ac4dd8ba424b572"
 그러나 하나의 파일에 대해 수정본, 찐 수정본, 찐찐 수정본 이렇게 정리하면 나중에 버전관리가 힘들고 필요할 때 꺼내볼 때 무엇이 바뀐지 알 수 없습니다.
 
 <div class="img-pair">
-  <img src="/images/study/git-download/01-messy-files.png" alt="최종, 진짜최종, 찐최종 파일들" />
-  <img src="/images/study/git-download/02-messy-folder.png" alt="수정본이 쌓여 엉망이 된 폴더" />
+  <img loading="lazy" decoding="async" src="/images/study/git-download/01-messy-files.png" alt="최종, 진짜최종, 찐최종 파일들" />
+  <img loading="lazy" decoding="async" src="/images/study/git-download/02-messy-folder.png" alt="수정본이 쌓여 엉망이 된 폴더" />
 </div>
 
 그래서 나온 프로그램이 버전관리 프로그램 **git**입니다. 이를 사용하면 위 사진처럼 복잡하게 파일을 저장하지 않고 아래 사진처럼 깔끔하게 정리하고 관리할 수 있습니다.
 
 <div class="img-pair">
-  <img src="/images/study/git-download/03-git-clean.png" alt="git으로 깔끔하게 관리되는 파일" />
-  <img src="/images/study/git-download/04-git-graph.png" alt="git 버전 그래프" />
+  <img loading="lazy" decoding="async" src="/images/study/git-download/03-git-clean.png" alt="git으로 깔끔하게 관리되는 파일" />
+  <img loading="lazy" decoding="async" src="/images/study/git-download/04-git-graph.png" alt="git 버전 그래프" />
 </div>
 
 그러면 이제 기본적으로 필요한 소프트웨어를 깔아봅시다.

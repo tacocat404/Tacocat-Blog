@@ -149,4 +149,17 @@
   - 사용자 특유의 말투 유지, 오타만 경미하게 정리. Mac 섹션은 "(작성 예정)".
   - 검증: 빌드 7페이지 통과, 이미지 7/7 로드, 나란히 배치·캡션·시리즈 배지 확인, 콘솔 0.
 
+### [구현] 심사 피드백 반영 — 리팩토링 + 가독성 + CI + 접근성 + 메모리
+- **사용자 프롬프트(요약)**: "심사평 5, 6(영어 빼버려), 8, 9, 사소 전부 고쳐줘. 리팩토링으로 유지보수성 개선. 애니메이션 메모리 개선(블로그 해치지 말고). 8·9번 설명해줘."
+- **Claude의 변경사항**:
+  - **리팩토링**: Desktop.astro의 420줄 뭉치를 분리 — 클라이언트 JS→`src/scripts/desktop.ts`, 아이콘 SVG→`src/config/icons.ts`, pixel.css→`base/os/wallpaper/prose.css` 4분할(@import 허브). 아이콘/시작메뉴는 `apps` 배열 루프로 중복 제거.
+  - **#6 영어 제거**: `/en/` 페이지·i18n 라우팅·언어 토글·titleEn/summaryEn 스키마 삭제. ui.ts 단일화. → **#4 hreflang 버그도 자동 해결**(빌드 확인: hreflang 0).
+  - **#5 하이브리드 타이포**: 본문(.prose)=Pretendard 15px(동적 서브셋 CDN), 제목·창틀·코드라벨=Galmuri 유지.
+  - **#8 CI**: `.github/workflows/ci.yml` — push/PR마다 `astro check`+`build` 자동 실행.
+  - **#9 포커스 반환**: 창 닫으면 해당 바탕화면 아이콘으로 키보드 포커스 복귀.
+  - **사소**: 마크다운 이미지 자동 `loading="lazy"`(rehype 커스텀 플러그인)+raw HTML 이미지 수동 적용, favicon-32.png+apple-touch-icon.png 생성·링크, `.gitattributes`(LF 통일), 시계에 날짜·요일 추가("07.05 (일) 18:26").
+  - **메모리**: ① 사용 안 하는 3개 계절 씬 DOM 제거(입자 수십 개 포함) ② 부팅 화면 노드 완전 제거 ③ 탭 숨김 시 배경 애니메이션 일시정지(visibilitychange) ④ 입자 `will-change` 제거(불필요한 GPU 레이어 방지). 화면에 보이는 건 그대로.
+  - 사고 기록: PowerShell 정규식 치환이 한글 인코딩을 깨뜨림(content.config.ts) → Write로 재작성, 이후 텍스트 치환은 UTF-8 명시([System.IO.File] 사용).
+  - 검증: check/build 0 에러, en 미출력, 계절 DOM 4→1, 부팅 노드 제거, 포커스 반환, 시계 날짜, Pretendard 본문/Galmuri 제목, 모바일 회귀 없음, 콘솔 0.
+
 <!-- 새 항목은 이 아래에 계속 추가 -->

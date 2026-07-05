@@ -2,27 +2,19 @@
 import "../styles/pixel.css";
 
 interface Props {
-  lang: "ko" | "en";
   title: string;
   description?: string;
 }
-const { lang, title, description } = Astro.props;
+const { title, description } = Astro.props;
 
 const desc =
-  description ??
-  (lang === "ko"
-    ? "픽셀 데스크톱 OS 콘셉트의 포트폴리오 · 수상 · 활동 · 공부기록 블로그"
-    : "A pixel desktop-OS style blog for portfolio, awards, activities, and study logs");
+  description ?? "픽셀 데스크톱 OS 콘셉트의 포트폴리오 · 수상 · 활동 · 공부기록 블로그";
 
-// canonical + 한/영 hreflang 상호 링크
-const path = Astro.url.pathname;
-const koPath = path.startsWith("/en") ? path.replace(/^\/en\/?/, "/") : path;
-const enPath = path.startsWith("/en") ? path : "/en" + (path === "/" ? "/" : path);
 const abs = (p: string) => new URL(p, Astro.site);
 ---
 
 <!doctype html>
-<html lang={lang}>
+<html lang="ko">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -30,28 +22,29 @@ const abs = (p: string) => new URL(p, Astro.site);
     <meta name="description" content={desc} />
     <meta name="theme-color" content="#8a6f55" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
-    <link rel="canonical" href={abs(path)} />
-    <link rel="alternate" hreflang="ko" href={abs(koPath)} />
-    <link rel="alternate" hreflang="en" href={abs(enPath)} />
-    <link rel="alternate" hreflang="x-default" href={abs(koPath)} />
+    <link rel="canonical" href={abs(Astro.url.pathname)} />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="404 Tacocat OS" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={desc} />
-    <meta property="og:url" content={abs(path)} />
+    <meta property="og:url" content={abs(Astro.url.pathname)} />
     <meta property="og:image" content={abs("/og.png")} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:locale" content={lang === "ko" ? "ko_KR" : "en_US"} />
+    <meta property="og:locale" content="ko_KR" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={desc} />
     <meta name="twitter:image" content={abs("/og.png")} />
 
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <!-- UI용 픽셀 폰트 + 본문용 가독 폰트 (동적 서브셋: 쓰는 글자만 내려받음) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/quiple/galmuri/dist/galmuri.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
     <link rel="sitemap" href="/sitemap-index.xml" />
   </head>
   <body>
