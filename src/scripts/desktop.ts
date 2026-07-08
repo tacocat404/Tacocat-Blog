@@ -49,6 +49,13 @@ const setActive = (win: HTMLElement | null) => {
 };
 
 const focusWin = (win: HTMLElement) => {
+  // z-index가 무한히 커지지 않게 주기적으로 재정규화
+  if (z > 200) {
+    const opens = [...document.querySelectorAll<HTMLElement>(".window")]
+      .sort((a, b) => +(a.style.zIndex || 0) - +(b.style.zIndex || 0));
+    z = 10;
+    opens.forEach((w) => (w.style.zIndex = String(++z)));
+  }
   win.style.zIndex = String(++z);
   setActive(win);
 };
@@ -80,6 +87,13 @@ const openApp = (name: string) => {
   if (!win) return;
   win.classList.remove("closing");
   win.classList.add("open");
+  // 좁은 화면에서 기본 위치(left 130~250px)가 오른쪽으로 삐져나가면 뷰포트 안으로 클램프
+  if (!matchMedia("(max-width: 640px)").matches) {
+    const r = win.getBoundingClientRect();
+    if (r.right > innerWidth - 8) {
+      win.style.left = Math.max(8, innerWidth - r.width - 8) + "px";
+    }
+  }
   makeTaskBtn(win);
   focusWin(win);
   win.focus({ preventScroll: true });
@@ -148,12 +162,21 @@ document.querySelectorAll<HTMLElement>(".window .titlebar").forEach((bar) => {
     const dx = e.clientX - r.left;
     const dy = e.clientY - r.top;
     try { bar.setPointerCapture(e.pointerId); } catch {}
-    const move = (ev: PointerEvent) => {
+    // pointermove는 프레임보다 자주 발생(고주사율 마우스) → rAF로 프레임당 1회만 스타일 반영
+    let raf = 0;
+    let lastX = e.clientX, lastY = e.clientY;
+    const paint = () => {
+      raf = 0;
       const w = win.offsetWidth;
-      win.style.left = Math.min(Math.max(ev.clientX - dx, 64 - w), innerWidth - 64) + "px";
-      win.style.top = Math.min(Math.max(ev.clientY - dy, 26), innerHeight - 80) + "px";
+      win.style.left = Math.min(Math.max(lastX - dx, 64 - w), innerWidth - 64) + "px";
+      win.style.top = Math.min(Math.max(lastY - dy, 26), innerHeight - 80) + "px";
+    };
+    const move = (ev: PointerEvent) => {
+      lastX = ev.clientX; lastY = ev.clientY;
+      if (!raf) raf = requestAnimationFrame(paint);
     };
     const up = () => {
+      if (raf) cancelAnimationFrame(raf);
       bar.removeEventListener("pointermove", move);
       bar.removeEventListener("pointerup", up);
       bar.removeEventListener("pointercancel", up);
@@ -175,8 +198,12 @@ const updateClock = () => {
   if (top) top.textContent = s;
   if (bottom) bottom.textContent = s;
 };
-updateClock();
-setInterval(updateClock, 10000);
+// 표시 단위가 '분'이므로 10초 폴링 대신 다음 분 경계에 맞춰 갱신
+const tickClock = () => {
+  updateClock();
+  setTimeout(tickClock, 60000 - (Date.now() % 60000) + 50);
+};
+tickClock();
 
 /* ===== 딥링크: /?open=study → 해당 창 자동 오픈 (글 페이지의 '뒤로' 버튼용) ===== */
 const openParam = new URLSearchParams(location.search).get("open");

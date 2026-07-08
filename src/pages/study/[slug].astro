@@ -13,12 +13,12 @@ const { Content } = await render(post);
 const cat = catInfo(post.data.category);
 ---
 
-<Base title={`${post.data.title} — 공부기록 · 404 Tacocat OS`} description={post.data.summary}>
+<Base title={`${post.data.title} - 공부기록 · 404 Tacocat OS`} description={post.data.summary}>
   <div class="browser-desk">
     <div class="browser">
       <header class="titlebar">
         <span class="dot-r"></span><span class="dot-y"></span>
-        <span class="t">공부기록.exe — {post.data.title}</span>
+        <span class="t">공부기록.exe - {post.data.title}</span>
         <a class="x" href="/?open=study" aria-label="닫기">x</a>
       </header>
       <div class="toolbar">
@@ -106,6 +106,7 @@ const cat = catInfo(post.data.category);
     box-shadow: inset 1px 1px 0 var(--bevel-light);
   }
   .nav-btn:hover { background: var(--peach); }
+  .nav-btn:focus-visible, .titlebar .x:focus-visible { outline: 2px dashed var(--ink); outline-offset: 1px; }
   .nav-btn.dis { opacity: .4; pointer-events: none; }
   .addr {
     flex: 1; font-size: 12px; color: var(--cocoa);

@@ -35,3 +35,6 @@ html, body {
 }
 
 img { image-rendering: pixelated; }
+
+/* 텍스트 선택도 팔레트 안에서 */
+::selection { background: var(--peach); color: var(--ink); }

@@ -79,6 +79,11 @@
 .icon:hover, .icon:focus { background: rgba(255,255,255,.28); outline: none; }
 .icon:hover .label, .icon:focus .label { background: var(--peach); box-shadow: 0 0 0 2px var(--peach); }
 .icon:focus-visible { outline: 2px dashed var(--ink); }
+/* 촉감: 아이콘을 누르는 순간 글리프가 살짝 눌린다 (Win95식 피드백) */
+.icon:active .glyph {
+  transform: translate(1px, 1px);
+  box-shadow: inset 2px 2px 0 rgba(58,42,24,.35);
+}
 .icon .glyph {
   width: 62px; height: 54px;
   background: var(--cream);
@@ -262,6 +267,7 @@
 .task-btn .ti { width: 16px; height: 14px; display: inline-flex; }
 .task-btn .ti svg { width: 16px; height: 14px; }
 .task-btn.active { background: var(--peach); box-shadow: inset 2px 2px 0 rgba(58,42,24,.35); }
+.task-btn:focus-visible, .start-btn:focus-visible { outline: 2px dashed var(--ink); outline-offset: 1px; }
 
 /* --- 시작 메뉴 --- */
 .start-menu {
@@ -282,9 +288,16 @@
   padding: 8px 12px; cursor: pointer;
   display: flex; align-items: center; gap: 10px;
 }
-.start-menu button:hover { background: var(--peach); }
+.start-menu button:hover, .start-menu button:focus-visible { background: var(--peach); outline: none; }
+.start-menu button:active { box-shadow: inset 2px 2px 0 rgba(58,42,24,.3); }
 .start-menu .mini { display: inline-flex; width: 24px; height: 20px; }
 .start-menu .mini svg { width: 24px; height: 20px; }
+
+/* --- 모션 최소화: 장식성 애니메이션 정지 (마스코트는 개별 처리됨) --- */
+@media (prefers-reduced-motion: reduce) {
+  .window.open, .window.open.closing, .start-menu.open { animation: none; }
+  #boot .logo, #boot .caret { animation: none; }
+}
 
 /* --- 모바일: 세로 목록(앱 서랍) --- */
 @media (max-width: 640px) {

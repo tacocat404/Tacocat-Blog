@@ -192,4 +192,14 @@
   - 검증: `npm run build` 성공, dist에 3건 모두 출력, 포트폴리오 창에 예시 콘텐츠 0건.
 - **다음 단계**: 수상/활동 섹션도 실제 내용으로 교체 (아직 예시 데이터).
 
+### [구현] 심사위원 관점 보완 — 보안 헤더 + 성능 + 촉감/접근성 폴리싱
+- **사용자 프롬프트(요약)**: "심사위원(UI/UX·백엔드·프론트) 관점 지적사항 보완해줘. About/시리즈 내비/포트폴리오 상세는 곧 채울 거라 제외. 디자인도 스킬 써서 보완." (+새 배포 주소 tacocat-blog-xpsx.vercel.app 공유)
+- **Claude의 변경사항**:
+  - **보안**: `vercel.json` 신설 — CSP(스크립트 self만, 스타일/폰트는 jsdelivr 한정), X-Frame-Options DENY(클릭재킹), nosniff, Referrer-Policy, Permissions-Policy, HSTS 2년.
+  - **배포**: `astro.config.mjs` site를 새 주소 `tacocat-blog-xpsx.vercel.app`으로 갱신 (canonical/OG/sitemap 연동).
+  - **성능**: ① 시계 10초 폴링 → 분 경계 정렬 setTimeout ② 창 드래그 pointermove를 rAF 스로틀(고주사율 마우스 대응) ③ z-index 200 초과 시 재정규화 ④ 좁은 화면에서 창이 오른쪽으로 삐져나가면 열 때 뷰포트 안으로 클램프.
+  - **디자인 폴리싱(taste-skill, 보존형 리디자인)**: 픽셀 컨셉은 그대로 두고 — 아이콘 클릭 시 글리프 눌림(Win95 촉감), 시작메뉴/작업표시줄 focus-visible, `::selection` 피치 톤, 창 팝/부팅 애니메이션 reduced-motion 게이트, 글 페이지 nav 버튼 포커스 링. 화면 노출 em-dash 정리(제목 콜론화, titlebar는 Win95식 하이픈; 사용자가 쓴 공부기록 원문은 보존).
+  - 검증: astro check 0, 빌드 성공, 프리뷰에서 시계/창 z-order/작업표시줄/포트폴리오 3건/CSS 주입 확인, 콘솔 에러 0, 스크린샷 정상.
+- **다음 단계**: About 연락처, 시리즈 이전/다음, 포트폴리오 상세 페이지(사용자가 내용 준비 후). 배포 후 응답 헤더 적용 확인.
+
 <!-- 새 항목은 이 아래에 계속 추가 -->
