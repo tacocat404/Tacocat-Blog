@@ -177,4 +177,19 @@
   - `C:\기미주\템플릿\CLAUDE.md` 생성 (블로그 저장소 밖) — 새 프로젝트 루트에 복사만 하면 DEVLOG 기록 규칙·운영 방식·한글 인코딩 주의가 자동 적용되는 범용 템플릿.
   - 블로그 전용 내용은 제거하고, 프로젝트마다 채우는 [대괄호] 빈칸 + 사용법 주석 포함.
 
+## 2026-07-08
+
+### [콘텐츠] 포트폴리오 실제 프로젝트 3건 등록 — GitHub 저장소 기반
+- **사용자 프롬프트(요약)**: "tacocat404의 SOGRA-hackathon / checking-attendance / Tacocat-Blog 3개 저장소를 읽고 블로그 포트폴리오에 정리해줘."
+- **Claude의 변경사항**:
+  - GitHub API로 두 외부 저장소의 README·메타데이터를 읽어 요약 (gh CLI 미로그인 → 익명 API 사용).
+  - `src/content/portfolio/`에 3건 작성:
+    - `tacocat-blog.md` — 404 Tacocat OS 블로그 (order 1, 2026.06–현재)
+    - `attendance-archive.md` — 출결기록실: Make+Gemini 출결 자동화 프론트엔드, 실무프로젝트 1 (order 2, 2026.07)
+    - `cookquest-sogra.md` — CookQuest: 요리 게이미피케이션 SOGRA 해커톤 출품작 (order 3, 2026.05–06)
+  - 예시 파일 2개 삭제 (`example-pixel-weather.md`, `example-retro-portfolio.md`).
+  - 사고 기록: `period: 2026.07`이 따옴표 없어 숫자로 파싱 → 빌드 실패 → `"2026.07"`로 수정 (CONTENT-GUIDE 규칙 재확인).
+  - 검증: `npm run build` 성공, dist에 3건 모두 출력, 포트폴리오 창에 예시 콘텐츠 0건.
+- **다음 단계**: 수상/활동 섹션도 실제 내용으로 교체 (아직 예시 데이터).
+
 <!-- 새 항목은 이 아래에 계속 추가 -->
