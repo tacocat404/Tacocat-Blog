@@ -227,4 +227,14 @@
   - 검증: `npm install`(lock 갱신) → `npm run build` "Complete!". dist 글 페이지에 `class="katex"` 610개·디스플레이 수식 7개, raw `$…$` 잔존 0개, KaTeX CSS는 글 페이지에만 로드(홈 미로드) 확인.
 - **다음 단계**: 노션 본문 그림 8장 + 손필기 스캔은 CSP(img-src 'self')·URL 만료로 자동 반입 불가. 사용자가 `public/images/study/linear-algebra-00-basics/`(본문 그림)·`public/attachments/linear-algebra-basics/`(손필기)에 저장하면 "준비 중" 캡션에 `<img>` 연결 + frontmatter attachments 채워 재배포.
 
+### [콘텐츠] 선형대수 첫 글 — 노션 손필기 이미지 8장 반영
+- **사용자 프롬프트(요약)**: "예전엔 노션에 이미지 있으면 반영됐는데 이번엔 안 됐다. 노션 '인공지능을 위한 선형대수' 첫 글을 읽고 이미지 넣어 재작성해줘."
+- **Claude의 변경사항**:
+  - `notion-fetch`로 원본 페이지(벡터~rank,해 개수 도출)를 읽어 **손필기 이미지 8장** 확인. S3 임시 URL(5분 만료)이라 즉시 다운로드 → `public/images/study/linear-algebra-00-basics/`에 저장.
+  - 본문 8곳에 `<img>` 연결(rehype가 loading=lazy 자동 부여). 기존 "준비 중" 캡션 4곳 + 노션에만 있던 4곳(연립방정식·정사영·행렬곱 4관점·span) 모두 채움.
+  - **이미지↔내용 검수**: 8장을 실제로 열어 확인 → 노션 순서상 1·2번 이미지가 서로 뒤바뀜(파일 01=행렬표기, 02=벡터덧셈)을 발견. 파일명을 내용에 맞게 재명명(`vector-add-scalar.png`/`notation-ax-b.png`)하고 캡션 교정. 3~8번은 위치·내용 일치 확인.
+  - CSP 무관: 로컬(`/images`, 'self')로 서빙하므로 `img-src 'self'` 통과.
+  - 검증: `npm run build` "Complete!", dist에 이미지 8개 복사·참조 일치, 프리뷰에서 8장 HTTP 200·naturalWidth>0·캡션 짝 확인, KaTeX 610개 유지.
+- **다음 단계**: 손필기 스캔 원본(첨부 다운로드용)은 `public/attachments/linear-algebra-basics/`에 넣고 frontmatter `attachments` 채우면 하단 첨부 섹션 활성화(라이트박스 기능은 이미 구현됨).
+
 <!-- 새 항목은 이 아래에 계속 추가 -->
