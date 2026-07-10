@@ -75,6 +75,11 @@
 .prose th { background: var(--cream-2); }
 .prose tr:nth-child(even) td { background: rgba(233,220,194,.4); }
 
+/* 수식(KaTeX): 디스플레이 수식은 넘칠 때 가로 스크롤 */
+.prose .katex { font-size: 1.02em; }
+.prose .katex-display { overflow-x: auto; overflow-y: hidden; padding: 4px 0; margin: 1em 0; }
+.prose .katex-display > .katex { white-space: nowrap; }
+
 /* 인용 */
 .prose blockquote {
   margin: .9em 0; padding: 8px 14px;

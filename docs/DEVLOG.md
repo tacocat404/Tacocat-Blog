@@ -5,6 +5,18 @@
 
 ---
 
+## 2026-07-09
+
+### [구현] 공부기록에 수식(KaTeX) 렌더링 + 하단 첨부파일(미리보기·다운로드) 기능
+- **사용자 프롬프트(요약)**: "공부기록에 선형대수학 폴더(분류)를 추가하고, 노션 'AI를 위한 선형대수' 첫 글 내용을 올리고 싶다. 내가 공부한 손필기 기록도 함께 첨부해서, 글 맨 밑에 첨부파일 영역을 만들어 클릭하면 미리보고 다운로드 버튼으로 받게 하고 싶다. (노션 본문은 조금 더 다듬은 뒤 올릴 예정이라, 우선 기능만 구현)"
+- **Claude의 변경사항**:
+  - **수식 렌더링**: `remark-math` + `rehype-katex` 추가(`package.json`, `astro.config.mjs`). `Base.astro`에 `math` prop을 두어 수식 있는 글에서만 KaTeX CSS(jsdelivr)를 조건부 로드 — 기존 CSP(`style-src`/`font-src`에 jsdelivr 허용)와 충돌 없음.
+  - **분류**: `src/config/study.ts`의 KNOWN에 `선형대수학`(order 1) 추가.
+  - **첨부파일**: `content.config.ts` study 스키마에 `attachments`(label/file/kind) 필드 추가. `study/[slug].astro` 하단에 첨부 섹션(썸네일 그리드) + 라이트박스(이미지/ PDF 미리보기, 다운로드 버튼) + 번들 스크립트(CSP `script-src 'self'` 준수). 스타일은 픽셀 OS 톤으로.
+  - **글**: `src/content/study/linear-algebra-00-basics.md` 초안 생성(분류 선형대수학, 시리즈 '인공지능을 위한 선형대수'). 본문은 KaTeX 렌더 검증용 샘플 — 노션 정리본으로 교체 예정. 첨부는 `public/attachments/linear-algebra-basics/note-1~3.jpg` 참조.
+  - **검증**: `/tmp` 격리 빌드로 전체 빌드 성공 확인. 결과 HTML에 KaTeX(인라인 14·디스플레이 2) 정상 렌더, raw `$` 잔존 없음, 첨부 섹션·다운로드 링크·라이트박스 정상 생성 확인.
+- **다음 단계**: (1) 사용자가 노션 본문 다듬어 주면 글 본문 교체, (2) 손필기 이미지 3장을 `public/attachments/linear-algebra-basics/`에 저장, (3) 확인 후 commit·push(자동 배포). ⚠️ 이번 세션은 push 안 함(콘텐츠·이미지 대기).
+
 ## 2026-06-30
 
 ### [기획] 디자인 방향 전환: 로우폴리 3D → 픽셀아트
@@ -201,5 +213,18 @@
   - **디자인 폴리싱(taste-skill, 보존형 리디자인)**: 픽셀 컨셉은 그대로 두고 — 아이콘 클릭 시 글리프 눌림(Win95 촉감), 시작메뉴/작업표시줄 focus-visible, `::selection` 피치 톤, 창 팝/부팅 애니메이션 reduced-motion 게이트, 글 페이지 nav 버튼 포커스 링. 화면 노출 em-dash 정리(제목 콜론화, titlebar는 Win95식 하이픈; 사용자가 쓴 공부기록 원문은 보존).
   - 검증: astro check 0, 빌드 성공, 프리뷰에서 시계/창 z-order/작업표시줄/포트폴리오 3건/CSS 주입 확인, 콘솔 에러 0, 스크린샷 정상.
 - **다음 단계**: About 연락처, 시리즈 이전/다음, 포트폴리오 상세 페이지(사용자가 내용 준비 후). 배포 후 응답 헤더 적용 확인.
+
+## 2026-07-10
+
+### [구현] 공부기록 KaTeX 수식 + 첨부(미리보기/다운로드) + 선형대수학 분류, 첫 글 배포
+- **사용자 프롬프트(요약)**: 직전 Cowork 세션에서 만든 변경(선형대수학 분류 + KaTeX 수식 렌더 + 하단 첨부파일 기능 + 첫 글)을 검증 → 빌드 → 커밋 → 푸시(배포)까지 마무리해달라.
+- **Claude의 변경사항**:
+  - **KaTeX 수식**: `remark-math` + `rehype-katex` 추가(package.json), `astro.config.mjs`에서 remarkPlugins/rehypePlugins 연결. `Base.astro`에 `math?: boolean` prop — 참일 때만 KaTeX CSS(jsdelivr, katex@0.16.22) 조건부 로드(글 페이지에서만). `[slug].astro`는 `math={true}`로 렌더.
+  - **분류**: `src/config/study.ts` KNOWN에 `선형대수학`(color #c8bce0, order 1) 추가, 알고리즘 order 2로 밀림.
+  - **첨부 기능**: `content.config.ts` study 스키마에 `attachments`(label/file/kind: image|pdf, 기본 []) 추가. `[slug].astro` 본문 아래 썸네일 그리드 + 라이트박스(이미지/PDF iframe 미리보기 + 다운로드 + Esc 닫기). 관련 스타일 포함.
+  - **수식 스크롤**: `prose.css`에 `.katex-display { overflow-x:auto }` 등 넘침 방지.
+  - **새 글**: `src/content/study/linear-algebra-00-basics.md` — 시리즈 "인공지능을 위한 선형대수" #0. 벡터~전치~내적/노름~사영~행렬곱 4관점~기저~rank~null space 4부분공간~Ax=b 해 개수 10개 절, KaTeX 마크다운. 그림은 "*(그림: … — 준비 중)*" 캡션으로 자리만, attachments는 빈 배열.
+  - 검증: `npm install`(lock 갱신) → `npm run build` "Complete!". dist 글 페이지에 `class="katex"` 610개·디스플레이 수식 7개, raw `$…$` 잔존 0개, KaTeX CSS는 글 페이지에만 로드(홈 미로드) 확인.
+- **다음 단계**: 노션 본문 그림 8장 + 손필기 스캔은 CSP(img-src 'self')·URL 만료로 자동 반입 불가. 사용자가 `public/images/study/linear-algebra-00-basics/`(본문 그림)·`public/attachments/linear-algebra-basics/`(손필기)에 저장하면 "준비 중" 캡션에 `<img>` 연결 + frontmatter attachments 채워 재배포.
 
 <!-- 새 항목은 이 아래에 계속 추가 -->

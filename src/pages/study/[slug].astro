@@ -13,7 +13,7 @@ const { Content } = await render(post);
 const cat = catInfo(post.data.category);
 ---
 
-<Base title={`${post.data.title} - 공부기록 · 404 Tacocat OS`} description={post.data.summary}>
+<Base title={`${post.data.title} - 공부기록 · 404 Tacocat OS`} description={post.data.summary} math={true}>
   <div class="browser-desk">
     <div class="browser">
       <header class="titlebar">
@@ -45,6 +45,38 @@ const cat = catInfo(post.data.category);
         <div class="prose">
           <Content />
         </div>
+
+        {post.data.attachments.length > 0 && (
+          <section class="attachments" aria-label="첨부파일">
+            <h2 class="attach-title">📎 첨부파일 — 손필기 원본</h2>
+            <ul class="attach-list">
+              {post.data.attachments.map((a) => (
+                <li class="attach-item">
+                  <button
+                    type="button"
+                    class="attach-thumb"
+                    data-src={a.file}
+                    data-kind={a.kind}
+                    data-label={a.label}
+                    aria-label={`${a.label} 미리보기`}
+                  >
+                    {a.kind === "image" ? (
+                      <img src={a.file} alt={a.label} loading="lazy" decoding="async" />
+                    ) : (
+                      <span class="attach-fileicon">PDF</span>
+                    )}
+                    <span class="attach-zoom">🔍 미리보기</span>
+                  </button>
+                  <div class="attach-meta">
+                    <span class="attach-label">{a.label}</span>
+                    <a class="attach-dl" href={a.file} download>⬇ 다운로드</a>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
         <hr class="rule" />
         <footer class="post-footer">
           <a class="start-btn" href="/?open=study"><span class="dot"></span>목록으로</a>
@@ -53,7 +85,68 @@ const cat = catInfo(post.data.category);
       </article>
     </div>
   </div>
+
+  <div class="lightbox" id="lightbox" hidden>
+    <div class="lb-titlebar">
+      <span class="lb-name" id="lb-name"></span>
+      <a class="lb-dl" id="lb-dl" href="#" download>⬇ 다운로드</a>
+      <button type="button" class="lb-x" id="lb-x" aria-label="닫기">x</button>
+    </div>
+    <div class="lb-stage" id="lb-stage"></div>
+  </div>
 </Base>
+
+<script>
+  const lb = document.getElementById("lightbox");
+  const stage = document.getElementById("lb-stage");
+  const nameEl = document.getElementById("lb-name");
+  const dlEl = document.getElementById("lb-dl");
+
+  function openLightbox(src, kind, label) {
+    if (!lb || !stage || !nameEl || !dlEl) return;
+    stage.innerHTML = "";
+    if (kind === "pdf") {
+      const frame = document.createElement("iframe");
+      frame.src = src;
+      frame.title = label || "미리보기";
+      stage.appendChild(frame);
+    } else {
+      const img = document.createElement("img");
+      img.src = src;
+      img.alt = label || "미리보기";
+      stage.appendChild(img);
+    }
+    nameEl.textContent = label || "";
+    dlEl.setAttribute("href", src);
+    lb.hidden = false;
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeLightbox() {
+    if (!lb || !stage) return;
+    lb.hidden = true;
+    stage.innerHTML = "";
+    document.body.style.overflow = "";
+  }
+
+  document.querySelectorAll(".attach-thumb").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      openLightbox(
+        btn.getAttribute("data-src") || "",
+        btn.getAttribute("data-kind") || "image",
+        btn.getAttribute("data-label") || "",
+      );
+    });
+  });
+
+  document.getElementById("lb-x")?.addEventListener("click", closeLightbox);
+  lb?.addEventListener("click", (e) => {
+    if (e.target === lb) closeLightbox();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && lb && !lb.hidden) closeLightbox();
+  });
+</script>
 
 <style>
   body { overflow: auto; }
@@ -128,8 +221,91 @@ const cat = catInfo(post.data.category);
   .post-footer { display: flex; gap: 10px; margin-top: 6px; }
   .post-footer .start-btn { text-decoration: none; }
 
+  /* ===== 첨부파일 ===== */
+  .attachments { margin-top: 18px; }
+  .attach-title {
+    font-family: var(--font-pixel); font-size: 15px;
+    margin: 0 0 12px; padding: 4px 10px;
+    background: var(--cream-2); border-left: 5px solid var(--peach);
+  }
+  .attach-list {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px;
+  }
+  .attach-item {
+    border: 3px solid var(--ink); background: var(--cream);
+    box-shadow: 3px 3px 0 rgba(58,42,24,.28);
+    display: flex; flex-direction: column;
+  }
+  .attach-thumb {
+    position: relative; display: block; width: 100%; padding: 0;
+    border: none; border-bottom: 2px solid var(--ink);
+    background: var(--cream-2); cursor: pointer; overflow: hidden;
+    aspect-ratio: 4 / 3;
+  }
+  .attach-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .attach-fileicon {
+    display: flex; align-items: center; justify-content: center;
+    width: 100%; height: 100%;
+    font-family: var(--font-pixel); font-size: 22px; color: var(--cocoa);
+  }
+  .attach-zoom {
+    position: absolute; inset: auto 0 0 0;
+    background: rgba(58,42,24,.78); color: var(--cream);
+    font-size: 11px; padding: 3px 0; text-align: center;
+    opacity: 0; transition: opacity .12s;
+  }
+  .attach-thumb:hover .attach-zoom,
+  .attach-thumb:focus-visible .attach-zoom { opacity: 1; }
+  .attach-thumb:focus-visible { outline: 2px dashed var(--ink); outline-offset: -4px; }
+  .attach-meta { display: flex; flex-direction: column; gap: 6px; padding: 8px 10px; }
+  .attach-label { font-size: 12px; line-height: 1.4; color: var(--ink); }
+  .attach-dl {
+    align-self: flex-start; text-decoration: none; font-size: 11px;
+    color: var(--ink); background: var(--cream); border: 2px solid var(--ink);
+    padding: 3px 8px; box-shadow: inset 1px 1px 0 var(--bevel-light);
+  }
+  .attach-dl:hover { background: var(--peach); }
+  .attach-dl:focus-visible { outline: 2px dashed var(--ink); outline-offset: 1px; }
+
+  /* ===== 라이트박스(미리보기) ===== */
+  .lightbox {
+    position: fixed; inset: 0; z-index: 9999;
+    background: rgba(40,28,16,.82);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 24px 16px;
+  }
+  .lightbox[hidden] { display: none; }
+  .lb-titlebar {
+    width: min(900px, 100%); display: flex; align-items: center; gap: 10px;
+    background: var(--peach);
+    background-image: repeating-linear-gradient(var(--peach), var(--peach) 2px, #edb076 2px, #edb076 4px);
+    border: 3px solid var(--ink); border-bottom: none;
+    padding: 6px 10px; color: #5a2a0c; font-size: 13px;
+  }
+  .lb-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .lb-dl {
+    text-decoration: none; font-size: 11px; color: var(--ink);
+    background: var(--cream); border: 2px solid var(--ink); padding: 2px 8px;
+  }
+  .lb-dl:hover { background: #f2cf4a; }
+  .lb-x {
+    width: 22px; height: 20px; cursor: pointer;
+    background: var(--cream); border: 2px solid var(--ink);
+    color: var(--ink); font-size: 12px; line-height: 14px;
+  }
+  .lb-x:hover { background: #f2a3a3; }
+  .lb-stage {
+    width: min(900px, 100%); flex: 1; min-height: 0;
+    background: var(--cream); border: 3px solid var(--ink);
+    display: flex; align-items: center; justify-content: center; overflow: auto;
+  }
+  .lb-stage img { max-width: 100%; max-height: 78vh; object-fit: contain; display: block; }
+  .lb-stage iframe { width: 100%; height: 78vh; border: none; background: #fff; }
+
   @media (max-width: 640px) {
     .browser-desk { padding: 10px 6px 24px; }
     .titlebar .t { font-size: 12px; }
+    .attach-list { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
   }
 </style>

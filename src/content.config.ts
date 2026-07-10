@@ -52,6 +52,16 @@ const study = defineCollection({
     summary: z.string().optional(),
     // 노션 원본 페이지 (동기화 추적용)
     notionUrl: z.string().optional(),
+    // 하단 첨부파일: 클릭 미리보기 + 다운로드. file은 /public 기준 경로.
+    attachments: z
+      .array(
+        z.object({
+          label: z.string(),
+          file: z.string(),
+          kind: z.enum(['image', 'pdf']).default('image'),
+        }),
+      )
+      .default([]),
     order: z.number().default(0),
   }),
 });

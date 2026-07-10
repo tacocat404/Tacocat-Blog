@@ -1,5 +1,7 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 
 // 마크다운 이미지에 lazy 로딩 자동 부여 (rehype 커스텀 플러그인)
 function rehypeLazyImages() {
@@ -23,6 +25,8 @@ export default defineConfig({
   integrations: [sitemap()],
   markdown: {
     shikiConfig: { theme: 'monokai' },
-    rehypePlugins: [rehypeLazyImages],
+    // remarkMath: $...$ / $$...$$ 를 수식 노드로 파싱 -> rehypeKatex: KaTeX HTML로 렌더
+    remarkPlugins: [remarkMath],
+    rehypePlugins: [rehypeLazyImages, rehypeKatex],
   },
 });

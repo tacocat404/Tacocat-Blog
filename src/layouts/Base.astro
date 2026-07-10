@@ -4,8 +4,9 @@ import "../styles/pixel.css";
 interface Props {
   title: string;
   description?: string;
+  math?: boolean;
 }
-const { title, description } = Astro.props;
+const { title, description, math } = Astro.props;
 
 const desc =
   description ?? "픽셀 데스크톱 OS 콘셉트의 포트폴리오 · 수상 · 활동 · 공부기록 블로그";
@@ -45,6 +46,9 @@ const abs = (p: string) => new URL(p, Astro.site);
     <!-- UI용 픽셀 폰트 + 본문용 가독 폰트 (동적 서브셋: 쓰는 글자만 내려받음) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/quiple/galmuri/dist/galmuri.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+    {math && (
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" />
+    )}
     <link rel="sitemap" href="/sitemap-index.xml" />
   </head>
   <body>

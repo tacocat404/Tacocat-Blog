@@ -5,7 +5,8 @@ export type CatInfo = { color: string; order: number };
 
 const KNOWN: Record<string, CatInfo> = {
   인공지능: { color: '#bbd8e2', order: 0 },
-  알고리즘: { color: '#a7be9e', order: 1 },
+  선형대수학: { color: '#c8bce0', order: 1 },
+  알고리즘: { color: '#a7be9e', order: 2 },
   기타: { color: '#f4c792', order: 99 },
 };
 
