@@ -80,6 +80,15 @@
 .prose .katex-display { overflow-x: auto; overflow-y: hidden; padding: 4px 0; margin: 1em 0; }
 .prose .katex-display > .katex { white-space: nowrap; }
 
+/* 스크롤 성능: 화면 밖 블록은 레이아웃·페인트 생략 (수식 많은 긴 글 렉 방지).
+   pre·이미지 블록은 그림자가 paint containment에 잘리므로 제외. */
+@supports (content-visibility: auto) {
+  .prose > :not(pre, :has(img)) {
+    content-visibility: auto;
+    contain-intrinsic-block-size: auto 3em;
+  }
+}
+
 /* 인용 */
 .prose blockquote {
   margin: .9em 0; padding: 8px 14px;

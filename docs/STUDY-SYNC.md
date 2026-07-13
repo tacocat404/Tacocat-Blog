@@ -45,8 +45,10 @@ notionUrl: "https://app.notion.com/p/..."   # 원본 추적용
 ## 6. 이미지(짤·스크린샷) 처리 — 중요
 노션 이미지 URL은 **1시간짜리 임시 링크**라 그대로 쓰면 깨진다. 반드시 다운로드:
 1. `notion-download-attachment` 도구(있으면) 또는 PowerShell `Invoke-WebRequest -Uri <url> -OutFile <path>`로 다운로드.
-2. 저장 위치: `public/images/study/<슬러그>/<번호-설명>.png`
-3. 마크다운: `![캡션 설명](/images/study/<슬러그>/01-result.png)` — 캡션은 이미지 다음 줄에 `*이탤릭*`으로 쓰면 자동 캡션 스타일.
+2. 저장 위치: `src/assets/study/<슬러그>/<번호-설명>.png` — **src/assets에 둬야 Astro가 빌드 때 WebP 변환 + width/height 자동 삽입** (public에 두면 원본 PNG가 그대로 나가서 무겁고 로드 시 레이아웃이 밀린다).
+3. 마크다운: `![캡션 설명](../../assets/study/<슬러그>/01-result.png)` — **콘텐츠 파일 기준 상대경로**. 캡션은 이미지 다음 줄에 `*이탤릭*`으로 쓰면 자동 캡션 스타일.
+4. 예외: 마크다운이 아닌 raw HTML `<img>`(예: `.img-pair` 2단 배치)는 Astro가 최적화하지 못한다 → 이때만 `public/images/study/<슬러그>/`에 두고 `/images/...` 절대경로 사용.
+5. 첨부파일(다운로드용 원본)은 계속 `public/attachments/<슬러그>/` — 원본 그대로 제공이 목적이라 최적화 대상이 아니다.
 
 ## 7. 검증 & 발행
 1. `npm run check` (0 에러 확인)

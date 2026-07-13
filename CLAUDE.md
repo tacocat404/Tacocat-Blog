@@ -15,5 +15,5 @@
 - ⚠️ **PowerShell로 한글 파일 텍스트 치환 금지** (인코딩 깨짐) — Edit/Write 도구 사용.
 - 코드 구조: 클라이언트 JS=`src/scripts/desktop.ts`, 아이콘=`src/config/icons.ts`, CSS=`src/styles/`(base/os/wallpaper/prose 4분할, pixel.css가 허브).
 - 콘텐츠 추가법은 `docs/CONTENT-GUIDE.md`, 노션 동기화 절차는 `docs/STUDY-SYNC.md` 필독.
-- 노션 이미지는 1시간 임시 URL — 반드시 다운로드해서 `public/images/study/<슬러그>/`에 저장.
+- 노션 이미지는 1시간 임시 URL — 반드시 다운로드해서 `src/assets/study/<슬러그>/`에 저장하고 마크다운에선 상대경로(`../../assets/...`)로 참조 (Astro가 WebP 변환+width/height 자동 삽입. raw HTML `<img>`만 예외적으로 `public/images/`). 상세는 `docs/STUDY-SYNC.md` §6.
 - 언어는 한국어 단일 (영어 버전 제거됨 — 되살리지 말 것).
