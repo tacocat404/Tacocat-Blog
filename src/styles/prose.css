@@ -89,6 +89,31 @@
   }
 }
 
+/* ===== 독서 글(.prose--book): 종이책 느낌의 명조 타이포그래피 ===== */
+.prose--book {
+  font-family: "Noto Serif KR", "Nanum Myeongjo", "Batang", serif;
+  font-size: 16.5px;
+  line-height: 2.05;
+  letter-spacing: 0;
+  word-break: keep-all;
+  text-wrap: pretty;
+}
+.prose--book p { margin: 1.1em 0; }
+.prose--book strong { font-weight: 700; }
+.prose--book blockquote {
+  position: relative;
+  margin: 1.6em 0; padding: 16px 20px 16px 52px;
+  background: var(--cream-2);
+  border-left: 5px solid var(--peach);
+  font-size: 15.5px; line-height: 1.95; color: var(--cocoa-dark);
+}
+.prose--book blockquote::before {
+  content: "\201C";
+  position: absolute; left: 16px; top: 4px;
+  font-size: 44px; line-height: 1; color: var(--peach-dark);
+  font-family: Georgia, serif;
+}
+
 /* 인용 */
 .prose blockquote {
   margin: .9em 0; padding: 8px 14px;

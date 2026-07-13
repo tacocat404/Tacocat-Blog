@@ -11,9 +11,16 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content } = await render(post);
 const cat = catInfo(post.data.category);
+// 독서 글: 본문을 명조체 타이포그래피(prose--book)로, KaTeX 대신 명조 폰트 로드
+const isBook = post.data.category === "독서";
 ---
 
-<Base title={`${post.data.title} - 공부기록 · 404 Tacocat OS`} description={post.data.summary} math={true}>
+<Base
+  title={`${post.data.title} - 공부기록 · 404 Tacocat OS`}
+  description={post.data.summary}
+  math={!isBook}
+  serif={isBook}
+>
   <div class="browser-desk">
     <div class="browser">
       <header class="titlebar">
@@ -37,14 +44,46 @@ const cat = catInfo(post.data.category);
           <span class="date">{post.data.date}</span>
         </div>
         <h1 class="post-title">{post.data.title}</h1>
+        {post.data.bookInfo && <p class="book-info">📖 {post.data.bookInfo}</p>}
         {post.data.summary && <p class="post-summary">{post.data.summary}</p>}
         <div class="tags">
           {post.data.tags.map((x) => <span class="tag">#{x}</span>)}
         </div>
         <hr class="rule" />
-        <div class="prose">
+        <div class={isBook ? "prose prose--book" : "prose"}>
           <Content />
         </div>
+
+        {post.data.music.length > 0 && (
+          <section class="music" aria-label="함께 들은 노래">
+            <h2 class="music-title">📼 함께 들은 노래</h2>
+            <ul class="music-list">
+              {post.data.music.map((m) => (
+                <li class="cassette">
+                  <div class="cassette-shell">
+                    <div class="cassette-window">
+                      <span class="reel" aria-hidden="true"></span>
+                      <span class="tape-line" aria-hidden="true"></span>
+                      <span class="reel" aria-hidden="true"></span>
+                    </div>
+                    <div class="cassette-label">
+                      <span class="song-title">{m.title}</span>
+                      {m.artist && <span class="song-artist">{m.artist}</span>}
+                    </div>
+                  </div>
+                  <div class="music-meta">
+                    {m.note && <span class="music-note">♪ {m.note}</span>}
+                    {m.url && (
+                      <a class="music-play" href={m.url} target="_blank" rel="noopener noreferrer">
+                        ▶ 듣기
+                      </a>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         {post.data.attachments.length > 0 && (
           <section class="attachments" aria-label="첨부파일">
@@ -102,7 +141,7 @@ const cat = catInfo(post.data.category);
   const nameEl = document.getElementById("lb-name");
   const dlEl = document.getElementById("lb-dl");
 
-  function openLightbox(src, kind, label) {
+  function openLightbox(src: string, kind: string, label: string) {
     if (!lb || !stage || !nameEl || !dlEl) return;
     stage.innerHTML = "";
     if (kind === "pdf") {
@@ -216,10 +255,65 @@ const cat = catInfo(post.data.category);
   .series-badge { color: var(--cocoa); }
   .date { color: var(--cocoa); margin-left: auto; }
   .post-title { font-size: 24px; margin: 14px 0 6px; line-height: 1.4; }
+  .book-info {
+    margin: 0 0 8px; font-size: 13px; color: var(--cocoa-dark);
+    padding: 4px 10px; background: var(--cream-2);
+    border: 2px dashed var(--cocoa); display: inline-block;
+  }
   .post-summary { color: var(--cocoa); margin: 0 0 10px; }
   .rule { border: none; border-top: 2px dashed var(--cocoa); margin: 16px 0; }
   .post-footer { display: flex; gap: 10px; margin-top: 6px; }
   .post-footer .start-btn { text-decoration: none; }
+
+  /* ===== 함께 들은 노래 (카세트 위젯) ===== */
+  .music { margin-top: 18px; }
+  .music-title {
+    font-family: var(--font-pixel); font-size: 15px;
+    margin: 0 0 12px; padding: 4px 10px;
+    background: var(--cream-2); border-left: 5px solid var(--peach);
+  }
+  .music-list {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px;
+  }
+  .cassette {
+    border: 3px solid var(--ink); background: var(--cream);
+    box-shadow: 3px 3px 0 rgba(58,42,24,.28);
+  }
+  .cassette-shell { padding: 10px 12px 8px; background: var(--cream-2); border-bottom: 2px solid var(--ink); }
+  .cassette-window {
+    display: flex; align-items: center; gap: 8px;
+    background: #3a2a18; border: 2px solid var(--ink);
+    padding: 6px 12px; margin-bottom: 8px;
+  }
+  .reel {
+    width: 22px; height: 22px; flex: none;
+    border: 3px solid var(--cream); border-radius: 50%;
+    background:
+      conic-gradient(var(--cream) 0 25deg, transparent 25deg 90deg,
+        var(--cream) 90deg 115deg, transparent 115deg 180deg,
+        var(--cream) 180deg 205deg, transparent 205deg 270deg,
+        var(--cream) 270deg 295deg, transparent 295deg 360deg);
+    animation: reel-spin 3.5s linear infinite;
+  }
+  .tape-line { flex: 1; height: 3px; background: #8a6f55; }
+  @keyframes reel-spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .reel { animation: none; } }
+  .cassette-label { display: flex; flex-direction: column; gap: 2px; }
+  .song-title { font-size: 14px; color: var(--ink); font-weight: 700; }
+  .song-artist { font-size: 12px; color: var(--cocoa-dark); }
+  .music-meta {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    padding: 8px 12px;
+  }
+  .music-note { font-size: 12px; color: var(--cocoa); flex: 1; min-width: 0; }
+  .music-play {
+    margin-left: auto; text-decoration: none; font-size: 11px;
+    color: var(--ink); background: var(--cream); border: 2px solid var(--ink);
+    padding: 3px 10px; box-shadow: inset 1px 1px 0 var(--bevel-light);
+  }
+  .music-play:hover { background: var(--peach); }
+  .music-play:focus-visible { outline: 2px dashed var(--ink); outline-offset: 1px; }
 
   /* ===== 첨부파일 ===== */
   .attachments { margin-top: 18px; }
