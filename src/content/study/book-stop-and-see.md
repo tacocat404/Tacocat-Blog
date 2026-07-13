@@ -6,12 +6,11 @@ tags: ["독서", "에세이", "혜민", "마음"]
 summary: "복잡했던 방학의 머릿속 — 목표와 인정 욕구에 지친 나에게 '열심히 하는 기분'과 '진짜 열심히'의 차이를 알려준 책."
 notionUrl: "https://app.notion.com/p/39c07509803280378f3ff47b6cffd499"
 bookInfo: "혜민 저 · 이영철 그림 | 쌤앤파커스"
-# 함께 들은 노래: 곡이 정해지면 아래 주석을 풀고 채우면 된다.
-# music:
-#   - title: "곡명"
-#     artist: "가수"
-#     url: "https://youtube.com/... 또는 https://open.spotify.com/..."
-#     note: "이 책을 읽으며 들은 노래"
+music:
+  - title: "My Wish, My Love"
+    artist: "heegyu"
+    url: "https://open.spotify.com/track/5YD5r2u0iWUrc9NBBKJFHZ"
+    note: "이 책을 읽으며 들은 노래"
 ---
 
 혼자 있을 시간이 많은 방학, 유난히 머리가 많이 복잡하고 잠이 오지 않아 무작정 도서관에 와 가장 마음이 와닿는 책을 집었다. 책 이름은 『멈추면, 비로소 보이는 것들』이었다.
