@@ -2,6 +2,8 @@
 // 구역: 부팅 → 창 관리(열기/닫기/최소화/포커스) → 시작 메뉴 → Esc → 드래그 → 시계 → 계절 배경.
 // 마크업은 Desktop.astro, 스타일은 src/styles/os.css 참고.
 
+import { renderWallpaper, initWallpaperResize, type Season } from "./wallpaper";
+
 /* ===== 부팅 화면: 첫 방문에만 재생 (재방문·모션 최소화 시 스킵) ===== */
 const boot = document.getElementById("boot");
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -209,18 +211,20 @@ tickClock();
 const openParam = new URLSearchParams(location.search).get("open");
 if (openParam) openApp(openParam);
 
-/* ===== 계절 배경 (북반구 기준, ?season= 으로 미리보기) ===== */
-const seasonOf = (m: number) =>
+/* ===== 계절 우주 배경 (북반구 기준, ?season= 으로 미리보기) ===== */
+const SEASONS = ["spring", "summer", "autumn", "winter"] as const;
+const seasonOf = (m: number): Season =>
   m >= 3 && m <= 5 ? "spring" :
   m >= 6 && m <= 8 ? "summer" :
   m >= 9 && m <= 11 ? "autumn" : "winter";
-const season =
-  new URLSearchParams(location.search).get("season") ?? seasonOf(new Date().getMonth() + 1);
+const paramSeason = new URLSearchParams(location.search).get("season") as Season | null;
+const season: Season =
+  paramSeason && (SEASONS as readonly string[]).includes(paramSeason)
+    ? paramSeason
+    : seasonOf(new Date().getMonth() + 1);
 document.body.dataset.season = season;
-document.querySelectorAll<HTMLElement>(".wp").forEach((w) => {
-  if (w.dataset.wp === season) w.classList.add("active");
-  else w.remove(); // 메모리: 안 쓰는 계절의 DOM(수십 개 입자 포함)을 제거
-});
+renderWallpaper(season);
+initWallpaperResize();
 
 /* ===== 메모리: 탭이 안 보일 때 배경 애니메이션 일시정지 ===== */
 document.addEventListener("visibilitychange", () => {

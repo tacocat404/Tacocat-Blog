@@ -1,6 +1,6 @@
 // 화면에 보이는 UI 문구 (콘텐츠가 아니라 '껍데기' 문구).
 export const ui = {
-  osName: '404 Tacocat OS',
+  osName: 'Alien Cat OS',
   boot: '부팅 중...',
   bootHint: '아무 키나 누르거나 클릭하세요',
   start: '시작',

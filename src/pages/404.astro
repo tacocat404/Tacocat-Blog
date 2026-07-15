@@ -2,15 +2,15 @@
 import Base from "../layouts/Base.astro";
 ---
 
-<Base title="404 - 404 Tacocat OS" description="페이지를 찾을 수 없습니다">
+<Base title="404 - Alien Cat OS" description="페이지를 찾을 수 없습니다">
   <div class="err-desktop">
     <section class="window open err-window" role="alertdialog" aria-label="404">
       <header class="titlebar"><span class="t">오류 · Error</span></header>
       <div class="body err-body">
-        <img class="err-mascot" src="/mascot.svg" alt="" width="72" height="82" />
+        <img class="err-mascot" src="/mascot.svg" alt="" width="72" height="84" />
         <p class="err-code">404</p>
-        <p class="err-msg">이 페이지는 고양이가 먹었어요.</p>
-        <p class="err-msg en">A cat ate this page.</p>
+        <p class="err-msg">이 페이지는 외계 고양이가 납치했어요.</p>
+        <p class="err-msg en">Abducted by the alien cat.</p>
         <div class="err-actions">
           <a class="start-btn" href="/"><span class="dot"></span>바탕화면으로</a>
         </div>
@@ -40,7 +40,7 @@ import Base from "../layouts/Base.astro";
   .err-window .titlebar { cursor: default; }
   .err-body { text-align: center; padding: 26px 18px; }
   .err-mascot { display: block; margin: 0 auto 6px; transform: rotate(8deg); }
-  .err-code { font-size: 56px; margin: 6px 0 2px; color: var(--spark); }
+  .err-code { font-size: 56px; margin: 6px 0 2px; color: #3f9e46; }
   .err-msg { margin: 2px 0; font-size: 15px; }
   .err-msg.en { color: var(--cocoa); font-size: 13px; }
   .err-actions { display: flex; gap: 10px; justify-content: center; margin-top: 18px; flex-wrap: wrap; }

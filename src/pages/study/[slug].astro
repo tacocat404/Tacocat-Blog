@@ -16,7 +16,7 @@ const isBook = post.data.category === "독서";
 ---
 
 <Base
-  title={`${post.data.title} - 공부기록 · 404 Tacocat OS`}
+  title={`${post.data.title} - 공부기록 · Alien Cat OS`}
   description={post.data.summary}
   math={!isBook}
   serif={isBook}
@@ -31,7 +31,7 @@ const isBook = post.data.category === "독서";
       <div class="toolbar">
         <a class="nav-btn" href="/?open=study" aria-label="뒤로">◀</a>
         <span class="nav-btn dis" aria-hidden="true">▶</span>
-        <span class="addr">tacocat://study/{post.id}</span>
+        <span class="addr">aliencat://study/{post.id}</span>
       </div>
       <article class="page-body">
         <div class="post-meta">

@@ -5,7 +5,7 @@
   position: fixed;
   inset: 0;
   z-index: 1000;
-  background: #2a2018;
+  background: #0a0e1e;
   color: var(--cream);
   display: flex;
   flex-direction: column;
@@ -17,7 +17,7 @@
 #boot .logo { width: 96px; height: 96px; animation: bootpulse 1s steps(2) infinite; }
 @keyframes bootpulse { 50% { opacity: .55; } }
 #boot .boot-title { font-size: 20px; letter-spacing: 1px; }
-#boot .boot-sub { font-size: 12px; color: var(--peach); margin-top: -14px; }
+#boot .boot-sub { font-size: 12px; color: var(--alien); margin-top: -14px; }
 #boot .caret { animation: caret-blink 1s steps(1) infinite; margin-left: 2px; }
 @keyframes caret-blink { 50% { opacity: 0; } }
 #boot .boot-bar {
@@ -28,7 +28,7 @@
 #boot .boot-bar > i {
   display: block; height: 100%;
   width: 0%;
-  background: var(--spark);
+  background: var(--alien);
   transition: width .25s steps(8);
 }
 #boot .boot-hint { font-size: 12px; opacity: .7; }
@@ -51,7 +51,7 @@
 .desktop {
   position: fixed; inset: 26px 0 34px 0;
   overflow: hidden;
-  background-color: var(--desktop);
+  background-color: #0d0a1e; /* 우주 배경 캔버스 로드 전 플래시 방지 */
 }
 .desktop::after, #boot::after {
   content: ""; position: absolute; inset: 0;
@@ -61,7 +61,7 @@
 .desktop::before {
   content: ""; position: absolute; inset: 0;
   pointer-events: none; z-index: 899;
-  box-shadow: inset 0 0 90px rgba(40,28,16,.28);
+  box-shadow: inset 0 0 90px rgba(5,8,18,.5); /* 우주 톤 CRT 비네트 */
 }
 
 /* --- 바탕화면 아이콘 --- */
@@ -94,35 +94,14 @@
 .icon .glyph svg { display: block; width: 46px; height: 38px; }
 .icon .label {
   text-align: center; line-height: 1.25;
-  text-shadow: 0 1px 0 rgba(251,243,226,.6);
+  color: var(--cream);
+  background: rgba(10,14,26,.6);
+  padding: 1px 7px;
+  text-shadow: 1px 1px 0 rgba(5,8,18,.8);
 }
+.icon:hover .label, .icon:focus .label { color: var(--ink); text-shadow: none; }
 
-/* --- 마스코트 (앉은 채 눈만 깜빡임) --- */
-.mascot-wrap {
-  position: absolute; right: 40px; bottom: 24px;
-  width: 88px; height: 100px;
-  pointer-events: none;
-  display: flex; align-items: flex-end; justify-content: center;
-}
-.mascot-wrap::before {
-  content: ""; position: absolute; left: 50%; top: 46%;
-  width: 128px; height: 128px; transform: translate(-50%, -50%);
-  background: radial-gradient(circle, rgba(255,248,235,.85) 0%, rgba(255,248,235,.45) 42%, rgba(255,248,235,0) 70%);
-  z-index: -1;
-}
-.mascot { width: 88px; height: auto; display: block; }
-.mascot .eyes {
-  transform-box: fill-box;
-  transform-origin: 50% 70%;
-  animation: blink 5.5s infinite;
-}
-@keyframes blink {
-  0%, 91%, 100% { transform: scaleY(1); }
-  93%, 96% { transform: scaleY(0.12); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .mascot .eyes { animation: none; }
-}
+/* (구 마스코트 스타일 제거 — 마스코트는 이제 우주 배경 씬에서 부유: wallpaper.css .wp-cat) */
 
 /* --- 창(window) --- */
 .window {
@@ -310,7 +289,8 @@
     background: var(--cream-2); border: 2px solid var(--cocoa);
     padding: 10px 12px; font-size: 15px;
   }
-  .mascot-wrap { position: relative; z-index: 1; margin: 18px auto 0; }
+  /* 모바일 카드는 크림 배경이라 라벨 다크 칩 불필요 */
+  .icon .label { background: transparent; color: var(--ink); text-shadow: none; padding: 0; }
   .window {
     position: fixed; inset: 26px 8px 40px; width: auto;
     max-height: none; transform: none !important; left: 8px !important; top: 26px !important;

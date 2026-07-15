@@ -1,59 +1,79 @@
-/* ===== 사계절 애니메이션 배경화면 =====
-   씬 마크업은 Wallpaper.astro. 안 쓰는 계절은 desktop.ts가 DOM에서 제거한다. */
+/* ===== 우주 배경 "달 위의 외계고양이" =====
+   씬 마크업은 Wallpaper.astro, 픽셀 렌더링은 src/scripts/wallpaper.ts.
+   계절 팔레트는 wallpaper.ts, 지구 대기 글로우만 body[data-season]으로 여기서 처리. */
 
-.wp { position: absolute; inset: 0; overflow: hidden; display: none; pointer-events: none; z-index: 0; }
-.wp.active { display: block; }
-.wp .scene { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
-.wp .fx { position: absolute; inset: 0; overflow: hidden; }
+.wp-space {
+  position: absolute; inset: 0;
+  overflow: hidden; pointer-events: none;
+  z-index: 0;
+  background: #0d0a1e; /* 캔버스 그리기 전 플래시 방지 */
+}
+.wp-space canvas, .wp-space img { position: absolute; image-rendering: pixelated; }
 
-/* 구름 흐름 */
-.cloud { animation: drift var(--cdur, 50s) linear infinite; animation-delay: var(--cdelay, 0s); }
-@keyframes drift {
-  from { transform: translateX(-150px); }
-  to   { transform: translateX(560px); }
+/* 하늘 3겹: 베이스 + 별 A/B (교차 블링크 = 레트로 2프레임 반짝임) */
+.wp-sky, .wp-starsA, .wp-starsB { inset: 0; width: 100%; height: 100%; }
+.wp-starsA { animation: wp-blink 2.6s steps(1) infinite; }
+.wp-starsB { animation: wp-blink 2.6s steps(1) infinite; animation-delay: -1.3s; }
+@keyframes wp-blink { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+
+/* 인공위성: 천천히 드리프트 */
+.wp-sat {
+  top: 9%; left: 42%;
+  animation: wp-drift 16s ease-in-out infinite;
+  opacity: .95;
+}
+@keyframes wp-drift {
+  0%, 100% { transform: translate(0, 0) rotate(8deg); }
+  50%      { transform: translate(-26px, 14px) rotate(4deg); }
 }
 
-/* 여름 해 광선 회전 */
-.spin { animation: spin 60s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* 겨울 별 반짝임 */
-.star { animation: twinkle 2.8s ease-in-out infinite; animation-delay: var(--sdelay, 0s); }
-@keyframes twinkle { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
-
-/* 새: 하늘을 가로지르며 위아래로 살짝 물결 */
-.bird { animation: fly var(--bdur, 36s) linear infinite; animation-delay: var(--bdelay, 0s); }
-@keyframes fly {
-  0%   { transform: translate(-40px, 0); }
-  25%  { transform: translate(120px, -10px); }
-  50%  { transform: translate(280px, 5px); }
-  75%  { transform: translate(440px, -8px); }
-  100% { transform: translate(600px, 0); }
+/* 지구: 달 지평선 뒤에서 떠오름 + 계절색 대기 글로우 */
+.wp-earthwrap {
+  position: absolute; left: 54%; transform: translateX(-50%);
+  bottom: 72px; z-index: 1; line-height: 0;
 }
+body[data-season="spring"] .wp-earthwrap { filter: drop-shadow(0 0 14px rgba(140,170,255,.40)) drop-shadow(0 0 34px rgba(242,160,181,.22)); }
+body[data-season="summer"] .wp-earthwrap { filter: drop-shadow(0 0 14px rgba(120,200,255,.45)) drop-shadow(0 0 34px rgba(90,220,230,.20)); }
+body[data-season="autumn"] .wp-earthwrap { filter: drop-shadow(0 0 14px rgba(255,190,120,.35)) drop-shadow(0 0 34px rgba(233,168,106,.20)); }
+body[data-season="winter"] .wp-earthwrap { filter: drop-shadow(0 0 14px rgba(170,205,255,.45)) drop-shadow(0 0 34px rgba(200,225,255,.22)); }
+.wp-earthwrap canvas { position: static; }
 
-/* 낙하 입자 (꽃잎/낙엽/눈) */
-.petal, .leaf, .flake {
-  position: absolute; top: -24px; display: block;
-  animation: fall var(--dur, 10s) linear infinite;
-  animation-delay: var(--delay, 0s);
+/* 달 표면 (전경): 28행 논리픽셀 → 화면 4px 도트 */
+.wp-moon { left: 0; bottom: 0; width: 100%; height: 112px; z-index: 2; }
+
+/* 마스코트: 달 위에 부유 + 글로우 + 발밑 그림자 */
+.wp-cat {
+  left: 8%; bottom: 134px; z-index: 3;
+  width: 96px; height: 112px;
+  animation: wp-float 3.8s ease-in-out infinite;
+  filter: drop-shadow(0 0 7px rgba(158, 222, 68, .55));
 }
-.petal { background: #f4b8ce; box-shadow: inset -1px -1px 0 #e79bb6; }
-.leaf  { background: #d9772f; box-shadow: inset -1px -1px 0 #b45e20; }
-.flake { background: #ffffff; box-shadow: 0 0 2px rgba(255,255,255,.7); }
-@keyframes fall {
-  0%   { transform: translate(0, 0) rotate(0deg); opacity: 0; }
-  10%  { opacity: .95; }
-  90%  { opacity: .95; }
-  100% { transform: translate(var(--dx, -40px), 105vh) rotate(var(--rot, 180deg)); opacity: 0; }
+@keyframes wp-float {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50%      { transform: translateY(-11px) rotate(2deg); }
+}
+.wp-catshadow {
+  position: absolute; left: calc(8% + 19px); bottom: 108px; z-index: 3;
+  width: 58px; height: 10px; border-radius: 50%;
+  background: rgba(10, 14, 26, .42);
+  animation: wp-shadow 3.8s ease-in-out infinite;
+}
+@keyframes wp-shadow {
+  0%, 100% { transform: scale(1); opacity: .55; }
+  50%      { transform: scale(.78); opacity: .32; }
 }
 
 /* 메모리/배터리: 탭이 안 보이면 배경 애니메이션 정지 (desktop.ts가 토글) */
-.bg-paused .wp *, .bg-paused .mascot .eyes { animation-play-state: paused; }
+.bg-paused .wp-space * { animation-play-state: paused; }
 
 @media (prefers-reduced-motion: reduce) {
-  .cloud, .spin, .petal, .leaf, .flake, .bird, .star { animation: none; }
+  .wp-starsA, .wp-starsB, .wp-sat, .wp-cat, .wp-catshadow { animation: none; }
 }
 
 @media (max-width: 640px) {
-  .wp { position: fixed; inset: 0; }
+  .wp-space { position: fixed; inset: 0; }
+  /* 좁은 화면: 마스코트 축소 + 지구 우측 이동 (겹침 방지) */
+  .wp-earthwrap { left: 62%; }
+  .wp-cat { width: 72px; height: 84px; bottom: 128px; }
+  .wp-catshadow { left: calc(8% + 13px); bottom: 106px; width: 46px; height: 8px; }
 }

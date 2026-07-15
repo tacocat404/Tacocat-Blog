@@ -50,7 +50,7 @@ const apps = ["portfolio", "awards", "activities", "study", "about"] as const;
 <div id="boot">
   <img class="logo" src="/mascot.svg" alt="" />
   <div class="boot-title">{tr.osName}</div>
-  <div class="boot-sub">v1.0 · pixel edition</div>
+  <div class="boot-sub">v2.0 · space edition</div>
   <div class="boot-bar"><i></i></div>
   <div class="boot-hint">{tr.bootHint}<span class="caret">_</span></div>
 </div>
@@ -163,33 +163,13 @@ const apps = ["portfolio", "awards", "activities", "study", "about"] as const;
     <header class="titlebar"><span class="ico" set:html={icons.about} /><span class="t">{tr.apps.about}</span><button class="x" data-close aria-label={tr.close}>x</button></header>
     <div class="body">
       <article class="entry">
-        <h3>404 Tacocat</h3>
+        <h3>Alien Cat</h3>
         <p class="summary">{tr.emptyAbout}</p>
       </article>
     </div>
   </section>
 
-  <div class="mascot-wrap">
-    <svg class="mascot" viewBox="0 0 88 100" shape-rendering="crispEdges" role="img" aria-label="Claude Code mascot">
-      <rect x="36" y="0" width="16" height="20" fill="#d97757"/>
-      <rect x="36" y="68" width="16" height="20" fill="#d97757"/>
-      <rect x="0" y="36" width="20" height="16" fill="#d97757"/>
-      <rect x="68" y="36" width="20" height="16" fill="#d97757"/>
-      <rect x="14" y="14" width="14" height="14" fill="#e8946f"/>
-      <rect x="60" y="14" width="14" height="14" fill="#e8946f"/>
-      <rect x="14" y="60" width="14" height="14" fill="#e8946f"/>
-      <rect x="60" y="60" width="14" height="14" fill="#e8946f"/>
-      <rect x="28" y="28" width="32" height="32" fill="#d97757"/>
-      <rect x="32" y="24" width="24" height="40" fill="#d97757"/>
-      <rect x="24" y="32" width="40" height="24" fill="#d97757"/>
-      <g class="eyes">
-        <rect x="34" y="40" width="6" height="8" fill="#3a2218"/>
-        <rect x="48" y="40" width="6" height="8" fill="#3a2218"/>
-      </g>
-      <rect x="40" y="50" width="8" height="3" fill="#3a2218"/>
-      <rect x="-2" y="92" width="92" height="8" fill="#000" opacity="0.12"/>
-    </svg>
-  </div>
+  <!-- 마스코트는 우주 배경 씬(Wallpaper.astro) 안에서 달 위에 떠 있다 -->
 </div>
 
 <!-- 시작 메뉴 -->
